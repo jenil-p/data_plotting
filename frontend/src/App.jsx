@@ -4,7 +4,6 @@ import { Provider, useDispatch, useSelector } from 'react-redux';
 import { store } from './app/store';
 import { fetchUser, selectCurrentToken, selectCurrentUser, logoutUser, selectAuthStatus } from './features/auth/authSlice';
 import { ToastContainer } from 'react-toastify';
-import Navbar from './components/Navbar';
 import ProtectedRoute from './components/ProtectedRoute';
 import Login from './pages/Login';
 import Signup from './pages/Signup';
@@ -15,6 +14,9 @@ import AIAnalysis from './pages/dashboard/AIAnalysis';
 import Settings from './pages/dashboard/Settings';
 import About from './pages/dashboard/About';
 import ProjectDetails from './pages/dashboard/ProjectDetails';
+import { useLocation } from 'react-router-dom';
+import PublicRoute from './components/PublicRoute';
+import ErrorBoundary from './components/ErrorBoundary';
 
 function App() {
   return (
@@ -23,15 +25,16 @@ function App() {
         <AuthWrapper>
           <Routes>
             {/* Public routes */}
-            <Route path="/login" element={<Login />} />
-            <Route path="/signup" element={<Signup />} />
+            <Route element={<PublicRoute />}>
+              <Route path="/login" element={<Login />} />
+              <Route path="/signup" element={<Signup />} />
+            </Route>
 
             {/* Protected routes */}
             <Route element={<ProtectedRoute />}>
               <Route element={<DashboardLayout />}>
-                <Route index element={<Navigate to="/dashboard" replace />} />
                 <Route path="/dashboard" element={<CreateProject />} />
-                <Route path="/dashboard/:id" element={<ProjectDetails />} />
+                <Route path="/dashboard/:id" element={<ErrorBoundary><ProjectDetails /></ErrorBoundary>} />
                 <Route path="/history" element={<History />} />
                 <Route path="/ai-analysis" element={<AIAnalysis />} />
                 <Route path="/settings" element={<Settings />} />
@@ -40,7 +43,7 @@ function App() {
             </Route>
 
             {/* Catch-all route */}
-            <Route path="*" element={<Navigate to="/login" replace />} />
+            <Route path="*" element={<Navigate to="/dashboard" replace />} />
           </Routes>
           <ToastContainer position="top-right" />
         </AuthWrapper>
@@ -49,27 +52,45 @@ function App() {
   );
 }
 
-// Update AuthWrapper component
 const AuthWrapper = ({ children }) => {
   const dispatch = useDispatch();
   const navigate = useNavigate();
+  const location = useLocation();
   const { token, user, status } = useSelector((state) => state.auth);
 
   useEffect(() => {
-    // Check for existing token on initial load
-    const token = localStorage.getItem('token');
-    if (token && !user) {
-      dispatch(fetchUser());
+    const storedToken = localStorage.getItem('token');
+    if (storedToken) {
+      if (!user) {
+        console.log('Fetching user with token...');
+        dispatch(fetchUser());
+      }
     }
-  }, [dispatch]);
+  }, [dispatch, user]);
 
   useEffect(() => {
-    if (status === 'succeeded' && user && token) {
-      navigate('/dashboard', { replace: true });
-    } else if (status === 'failed') {
-      navigate('/login', { replace: true });
+    console.log('Current location:', location.pathname);
+    const publicPaths = ['/login', '/signup'];
+    const isPublicPath = publicPaths.includes(location.pathname);
+
+    if (status === 'loading') return;
+
+    if (token && user) {
+      if (isPublicPath) {
+        console.log('Redirecting from public path to /dashboard');
+        navigate('/dashboard', { replace: true });
+      }
+    } else if (!isPublicPath) {
+      console.log('Redirecting to /login from:', location.pathname);
+      navigate('/login', { state: { from: location }, replace: true });
     }
-  }, [status, token, user, navigate]);
+  }, [status, token, user, navigate, location]);
+
+  useEffect(() => {
+    console.log('Route changed to:', location.pathname);
+  }, [location]);
+
+  console.log('AuthWrapper state:', { token, user, status });
 
   return children;
 };

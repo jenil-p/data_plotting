@@ -24,27 +24,17 @@ const Login = () => {
   };
 
   const handleSubmit = async (e) => {
-  e.preventDefault();
-  if (!formData.email || !formData.password) {
-    toast.error('Please fill in all fields');
-    return;
-  }
-
-  setIsLoading(true);
-  try {
-    const result = await dispatch(loginUser(formData)).unwrap();
-    console.log('Login result:', result); // Debug log
-    
-    if (result?.token) {
-      localStorage.setItem('token', result.token);
+    e.preventDefault();
+    setIsLoading(true);
+    try {
+      await dispatch(loginUser(formData)).unwrap();
       navigate('/dashboard');
+    } catch (error) {
+      toast.error(error || 'Login failed. Please try again.');
+    } finally {
+      setIsLoading(false);
     }
-  } catch (error) {
-    toast.error(error || 'Login failed. Please try again.');
-  } finally {
-    setIsLoading(false);
-  }
-};
+  };
 
   return (
     <div className="min-h-screen flex items-center justify-center bg-gray-50 py-12 px-4 sm:px-6 lg:px-8">

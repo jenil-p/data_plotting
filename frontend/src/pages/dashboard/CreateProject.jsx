@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { useDispatch, useSelector } from 'react-redux';
+import { useSelector } from 'react-redux';
 import { toast } from 'react-hot-toast';
 import { createProject } from '../../api/project';
 import { FiUpload, FiX, FiSave, FiTrash2 } from 'react-icons/fi';
@@ -10,7 +10,6 @@ const CreateProject = () => {
   const [projectName, setProjectName] = useState('');
   const [isLoading, setIsLoading] = useState(false);
   const navigate = useNavigate();
-  const dispatch = useDispatch();
   const user = useSelector((state) => state.auth.user);
 
   console.log('CreateProject component rendered, user state:', user);
@@ -30,36 +29,56 @@ const CreateProject = () => {
   };
 
   const handleSubmit = async (e) => {
-  e.preventDefault();
-  if (!file) {
-    toast.error('Please select a file');
-    return;
-  }
+    e.preventDefault();
+    if (!file) {
+      toast.error('Please select a file');
+      return;
+    }
 
-  setIsLoading(true);
-  
-  try {
-    const formData = new FormData();
-    formData.append('file', file);
-    if (projectName) formData.append('name', projectName);
+    setIsLoading(true);
 
-    const response = await createProject(formData);
-    toast.success('Project created successfully!');
-    
-    // Navigate to project details
-    navigate(`/dashboard/${response.data.project._id}`);
-    
-  } catch (error) {
-    toast.error(error.message || 'Failed to create project');
-  } finally {
-    setIsLoading(false);
-  }
-};
+    try {
+      const formData = new FormData();
+      formData.append('file', file);
+      if (projectName) formData.append('name', projectName);
+
+      console.log('Submitting project with FormData:', {
+        file: file.name,
+        name: projectName,
+      });
+
+      const response = await createProject(formData);
+      console.log('createProject response:', response);
+
+      if (!response.data?.project?._id) {
+        throw new Error('Project ID not found in response');
+      }
+
+      toast.success('Project created successfully!');
+      const projectId = response.data.project._id;
+      console.log('Navigating to project details:', `/dashboard/${projectId}`);
+
+      // Add a slight delay to ensure state updates are processed
+      setTimeout(() => {
+        navigate(`/dashboard/${projectId}`);
+        console.log('Navigation called');
+      }, 3000);
+
+      // Reset form
+      setFile(null);
+      setProjectName('');
+    } catch (error) {
+      console.error('Create project error:', error);
+      toast.error(error.message || 'Failed to create project');
+    } finally {
+      setIsLoading(false);
+    }
+  };
 
   return (
     <div className="max-w-4xl mx-auto p-6">
       <h1 className="text-2xl font-bold mb-6">Create New Project</h1>
-      
+
       <form onSubmit={handleSubmit} className="space-y-6">
         <div>
           <label className="block text-sm font-medium mb-1">Project Name (optional)</label>
@@ -78,8 +97,8 @@ const CreateProject = () => {
             {file ? (
               <div className="flex items-center justify-between bg-gray-100 p-3 rounded">
                 <span>{file.name}</span>
-                <button 
-                  type="button" 
+                <button
+                  type="button"
                   onClick={() => setFile(null)}
                   className="text-red-500"
                 >

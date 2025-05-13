@@ -69,7 +69,7 @@ const authSlice = createSlice({
   initialState: {
     user: null,
     token: localStorage.getItem('token') || null,
-    status: 'idle',
+    status: localStorage.getItem('token') ? 'loading' : 'idle',
     error: null,
   },
   reducers: {
@@ -115,10 +115,6 @@ const authSlice = createSlice({
           token: state.token
         });
       })
-      .addCase(fetchUser.fulfilled, (state, action) => {
-        state.status = 'succeeded';
-        state.user = action.payload;
-      })
       // Logout
       .addCase(logoutUser.pending, (state) => {
         state.status = 'loading';
@@ -142,11 +138,21 @@ const authSlice = createSlice({
       .addCase(fetchUser.pending, (state) => {
         state.status = 'loading';
       })
+      // Update fetchUser case
+      .addCase(fetchUser.fulfilled, (state, action) => {
+        state.status = 'succeeded';
+        state.user = action.payload;
+        state.token = localStorage.getItem('token');
+        console.log('User fetched successfully:', action.payload);
+      })
+
       .addCase(fetchUser.rejected, (state, action) => {
         state.status = 'failed';
         state.error = action.payload;
-        console.log('fetchUser rejected, error:', action.payload);
-        toast.error('Failed to fetch user data. Please try again.');
+        state.user = null;
+        state.token = null;
+        localStorage.removeItem('token');
+        console.error('Failed to fetch user:', action.payload);
       });
   },
 });

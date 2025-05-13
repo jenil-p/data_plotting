@@ -86,6 +86,39 @@ exports.createProject = async (req, res, next) => {
   }
 };
 
+exports.getFileData = async (req, res, next) => {
+  try {
+    const project = await Project.findOne({
+      _id: req.params.id,
+      user: req.user.id
+    });
+
+    if (!project) {
+      return res.status(404).json({
+        status: 'fail',
+        message: 'No project found with that ID'
+      });
+    }
+
+    console.log('Reading file for project:', project.file);
+    const { data, columns } = await parseFile(project.file.path, project.file.originalName);
+    console.log('File parsed successfully, data length:', data.length, 'columns:', columns);
+
+    res.status(200).json({
+      status: 'success',
+      data: {
+        data,
+        columns
+      }
+    });
+  } catch (err) {
+    console.error('Error in getFileData:', err.message);
+    res.status(400).json({
+      status: 'fail',
+      message: err.message
+    });
+  }
+};
 
 // (rest of the file remains unchanged)
 exports.getProject = async (req, res, next) => {

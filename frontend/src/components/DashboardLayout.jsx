@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { FiFilePlus, FiClock, FiBarChart2, FiSettings, FiInfo } from 'react-icons/fi';
 import { RiCloseLine } from 'react-icons/ri';
-import { Link, Outlet, useNavigate } from 'react-router-dom';
+import { Link, Outlet, useNavigate ,useLocation } from 'react-router-dom';
 import { useDispatch } from 'react-redux';
 import { logoutUser } from '../features/auth/authSlice';
 
@@ -9,13 +9,16 @@ const DashboardLayout = () => {
   const [sidebarOpen, setSidebarOpen] = useState(true);
   const navigate = useNavigate();
   const dispatch = useDispatch();
+  const location = useLocation();
 
   const handleLogout = async () => {
-    try {
-      await dispatch(logoutUser()).unwrap();
-      navigate('/login');
-    } catch (error) {
-      console.error('Logout failed:', error);
+    if(confirm("Are you sure Want to Logout ?")){
+      try {
+        await dispatch(logoutUser()).unwrap();
+        navigate('/login');
+      } catch (error) {
+        console.error('Logout failed:', error);
+      }
     }
   };
 
@@ -33,7 +36,7 @@ const DashboardLayout = () => {
       <div className={`${sidebarOpen ? 'w-64' : 'w-20'} bg-gray-800 text-white transition-all duration-300 ease-in-out`}>
         <div className="flex items-center justify-between p-4 border-b border-gray-700">
           {sidebarOpen && <h1 className="text-xl font-bold">PlotPilot</h1>}
-          <button 
+          <button
             onClick={() => setSidebarOpen(!sidebarOpen)}
             className="p-1 rounded-lg hover:bg-gray-700"
           >
@@ -46,7 +49,9 @@ const DashboardLayout = () => {
               <li key={index} className="mb-2">
                 <Link
                   to={item.path}
-                  className="flex items-center p-3 hover:bg-gray-700 rounded-lg mx-2"
+                  // className="flex items-center p-3 hover:bg-gray-700 rounded-lg mx-2"
+                  className={`flex items-center p-3 hover:bg-gray-700 rounded-lg mx-2 ${location.pathname === item.path ? 'bg-gray-700' : ''
+                    }`}
                 >
                   <span className="text-xl">{item.icon}</span>
                   {sidebarOpen && <span className="ml-3">{item.name}</span>}

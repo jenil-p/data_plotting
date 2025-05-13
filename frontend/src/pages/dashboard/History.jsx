@@ -35,11 +35,14 @@ const History = () => {
   };
 
   if (loading) return <div>Loading...</div>;
+  // if (loading) {
+  //   return <FullPageSpinner />;
+  // }
 
   return (
     <div className="max-w-6xl mx-auto p-6">
       <h1 className="text-2xl font-bold mb-6">Project History</h1>
-      
+
       <div className="bg-white rounded-lg shadow overflow-hidden">
         <table className="min-w-full divide-y divide-gray-200">
           <thead className="bg-gray-50">

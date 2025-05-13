@@ -5,28 +5,24 @@ const API = axios.create({
   withCredentials: true,
 });
 
-API.interceptors.request.use(
-  (config) => {
-    console.log('Axios request:', config.method.toUpperCase(), config.url, 'Headers:', config.headers);
-    return config;
-  },
-  (error) => {
-    console.error('Axios request error:', error);
-    return Promise.reject(error);
+API.interceptors.request.use((config) => {
+  const token = localStorage.getItem('token');
+  if (token) {
+    config.headers.Authorization = `Bearer ${token}`;
   }
-);
+  return config;
+});
 
 API.interceptors.response.use(
   (response) => {
-    console.log('Axios response:', response.status, response.data);
+    console.log('API Success:', response.config.url, response.data);
     return response;
   },
   (error) => {
-    console.error('Axios response error:', error.response?.status, error.response?.data);
+    console.error('API Error:', error.config?.url, error.response?.status);
     if (error.response?.status === 401) {
-      console.log('401 Unauthorized - Clearing token and redirecting to login');
+      console.log('Clearing invalid token');
       localStorage.removeItem('token');
-      window.location.href = '/login';
     }
     return Promise.reject(error);
   }

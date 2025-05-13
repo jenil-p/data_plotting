@@ -21,15 +21,36 @@ export const logout = async () => {
   return response;
 };
 
+// export const getMe = async () => {
+//   const token = localStorage.getItem('token');
+//   console.log('getMe request with token:', token);
+//   const response = await API.get('/users/me', {
+//     headers: {
+//       Authorization: `Bearer ${token}`,
+//     },
+//   });
+//   return response;
+// };
+
 export const getMe = async () => {
-  const token = localStorage.getItem('token');
-  console.log('getMe request with token:', token);
-  const response = await API.get('/users/me', {
-    headers: {
-      Authorization: `Bearer ${token}`,
-    },
-  });
-  return response;
+  try {
+    const token = localStorage.getItem('token');
+    if (!token) throw new Error('No token found');
+    
+    const response = await API.get('/users/me', {
+      headers: { Authorization: `Bearer ${token}` }
+    });
+    
+    return {
+      data: {
+        user: response.data.user || response.data.data.user
+      }
+    };
+  } catch (error) {
+    console.error('getMe error:', error);
+    localStorage.removeItem('token');
+    throw error;
+  }
 };
 
 export const updateUsername = async (username) => {
@@ -45,26 +66,3 @@ export const updateProfilePicture = async (formData) => {
   });
   return response;
 };
-
-
-// import API from './axios';
-
-// export const signup = async (userData) => {
-//   const response = await API.post('/auth/signup', userData);
-//   return response.data;
-// };
-
-// export const login = async (credentials) => {
-//   const response = await API.post('/auth/login', credentials);
-//   return response.data;
-// };
-
-// export const logout = async () => {
-//   const response = await API.post('/auth/logout');
-//   return response.data;
-// };
-
-// export const getMe = async () => {
-//   const response = await API.get('/users/me');
-//   return response.data;
-// };
