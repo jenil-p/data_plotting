@@ -49,15 +49,15 @@ const About = () => {
       </div>
 
       {/* Mission Section */}
-      <div className="bg-white rounded-2xl shadow-xl p-8 mb-12 transform hover:scale-105 transition-transform duration-300">
+      <div className="bg-white rounded-2xl shadow-xl p-8 mb-12 transform  transition-transform duration-300">
         <h2 className="text-2xl md:text-3xl font-semibold text-indigo-600 mb-6">Our Mission</h2>
         <p className="text-gray-700 text-lg leading-relaxed">{aboutData.mission}</p>
       </div>
 
       {/* Team Section */}
-      <div className="mb-12">
+      {/* <div className="mb-12">
         <h2 className="text-2xl md:text-3xl font-semibold text-indigo-600 mb-8 text-center">The Team</h2>
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-8">
+        <div className="flex justify-center items-center gap-8">
           {aboutData.team.map((member, index) => (
             <div
               key={index}
@@ -72,10 +72,10 @@ const About = () => {
             </div>
           ))}
         </div>
-      </div>
+      </div> */}
 
       {/* Contact Section */}
-      <div className="bg-white rounded-2xl shadow-xl p-8 transform hover:scale-105 transition-transform duration-300">
+      <div className="bg-white rounded-2xl shadow-xl p-8 transform transition-transform duration-300">
         <h2 className="text-2xl md:text-3xl font-semibold text-indigo-600 mb-6">Contact Us</h2>
         <div className="space-y-4 text-gray-700 text-lg">
           <p>
