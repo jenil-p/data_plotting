@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { FiUserPlus, FiUser } from 'react-icons/fi';
 import { toast } from 'react-hot-toast';
-import { getAdmins, promoteToAdmin } from '../api/admin';
+import { getAdmins, promoteToAdmin } from '../../api/admin';
 
 const Admins = () => {
   const [admins, setAdmins] = useState([]);

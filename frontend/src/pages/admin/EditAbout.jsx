@@ -1,39 +1,33 @@
 import React, { useState, useEffect } from 'react';
 import { toast } from 'react-hot-toast';
-import { FiSave } from 'react-icons/fi';
+import { FiSave, FiPlus, FiTrash2 } from 'react-icons/fi';
+import { getAbout, updateAbout } from '../../api/about';
 
 const EditAbout = () => {
   const [aboutData, setAboutData] = useState({
     mission: '',
-    team: [
-      { name: '', role: '', initials: '' },
-      { name: '', role: '', initials: '' },
-      { name: '', role: '', initials: '' },
-    ],
+    team: [],
     contact: {
       email: '',
       phone: '',
       address: '',
     },
   });
+  const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    // Load default data or from localStorage
-    const defaultData = {
-      mission: 'PlotPilot was created to simplify data visualization for everyone. We believe that powerful insights should be accessible without requiring complex tools or technical expertise.',
-      team: [
-        { name: 'John Doe', role: 'Founder & CEO', initials: 'JD' },
-        { name: 'Alice Smith', role: 'Lead Developer', initials: 'AS' },
-        { name: 'Robert Johnson', role: 'Data Scientist', initials: 'RJ' },
-      ],
-      contact: {
-        email: 'support@plotpilot.com',
-        phone: '(123) 456-7890',
-        address: '123 Data Street, Visualization City, DV 12345',
-      },
+    const fetchAboutData = async () => {
+      try {
+        const response = await getAbout();
+        setAboutData(response.data);
+      } catch (error) {
+        console.error('Failed to fetch About data:', error);
+        toast.error('Failed to load About data');
+      } finally {
+        setLoading(false);
+      }
     };
-    const savedData = localStorage.getItem('aboutData');
-    setAboutData(savedData ? JSON.parse(savedData) : defaultData);
+    fetchAboutData();
   }, []);
 
   const handleChange = (e, section, index, field) => {
@@ -48,16 +42,44 @@ const EditAbout = () => {
     setAboutData(updatedData);
   };
 
-  const handleSubmit = (e) => {
+  const handleAddTeamMember = () => {
+    setAboutData({
+      ...aboutData,
+      team: [...aboutData.team, { name: '', role: '', initials: '' }],
+    });
+  };
+
+  const handleRemoveTeamMember = (index) => {
+    if (aboutData.team.length <= 1) {
+      toast.error('At least one team member is required');
+      return;
+    }
+    const updatedTeam = aboutData.team.filter((_, i) => i !== index);
+    setAboutData({ ...aboutData, team: updatedTeam });
+  };
+
+  const handleSubmit = async (e) => {
     e.preventDefault();
     try {
-      localStorage.setItem('aboutData', JSON.stringify(aboutData));
+      // Validate required fields
+      if (!aboutData.mission || !aboutData.contact.email || !aboutData.contact.phone || !aboutData.contact.address) {
+        throw new Error('Please fill in all required fields');
+      }
+      if (aboutData.team.length === 0 || aboutData.team.some(member => !member.name || !member.role || !member.initials)) {
+        throw new Error('Please fill in all team member details');
+      }
+
+      await updateAbout(aboutData);
       toast.success('About page updated successfully!');
     } catch (error) {
-      console.error('Failed to save about data:', error);
-      toast.error('Failed to update About page');
+      console.error('Failed to update About data:', error);
+      toast.error(error.message || 'Failed to update About page');
     }
   };
+
+  if (loading) {
+    return <div className="text-center text-gray-500 py-10 text-lg">Loading...</div>;
+  }
 
   return (
     <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-10 bg-gradient-to-br from-gray-50 to-gray-100 min-h-screen">
@@ -78,9 +100,25 @@ const EditAbout = () => {
 
         {/* Team Section */}
         <div>
-          <h2 className="text-xl font-semibold text-gray-800 mb-4">The Team</h2>
+          <div className="flex justify-between items-center mb-4">
+            <h2 className="text-xl font-semibold text-gray-800">The Team</h2>
+            <button
+              type="button"
+              onClick={handleAddTeamMember}
+              className="flex items-center text-indigo-600 hover:text-indigo-800 transition-colors"
+            >
+              <FiPlus className="mr-1" /> Add Member
+            </button>
+          </div>
           {aboutData.team.map((member, index) => (
-            <div key={index} className="mb-4 p-4 border rounded-lg">
+            <div key={index} className="mb-4 p-4 border rounded-lg relative">
+              <button
+                type="button"
+                onClick={() => handleRemoveTeamMember(index)}
+                className="absolute top-2 right-2 text-red-600 hover:text-red-800 transition-colors"
+              >
+                <FiTrash2 />
+              </button>
               <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
                 <div>
                   <label className="block text-sm font-medium text-gray-700">Name</label>

@@ -3,7 +3,7 @@ import { BrowserRouter as Router, Routes, Route, Navigate, useNavigate } from 'r
 import { Provider, useDispatch, useSelector } from 'react-redux';
 import { store } from './app/store';
 import { fetchUser } from './features/auth/authSlice';
-import { ToastContainer, toast } from 'react-toastify';
+import { ToastContainer } from 'react-toastify';
 import ProtectedRoute from './components/ProtectedRoute';
 import AdminProtectedRoute from './components/AdminProtectedRoute';
 import Login from './pages/Login';
@@ -13,12 +13,12 @@ import CreateProject from './pages/dashboard/CreateProject';
 import History from './pages/dashboard/History';
 import AIAnalysis from './pages/dashboard/AIAnalysis';
 import Settings from './pages/dashboard/Settings';
-import About from './pages/dashboard/About';
-import AdminDashboard from './pages/AdminDashboard';
-import SuspendedIDs from './pages/SuspendedIDs';
-import BlockedIDs from './pages/BlockedIDs';
-import Admins from './pages/Admins'; // New page for admins
-import EditAbout from './pages/EditAbout'; // New page for editing About content
+import About from './pages/About';
+import AdminDashboard from './pages/admin/AdminDashboard';
+import SuspendedIDs from './pages/admin/SuspendedIDs';
+import BlockedIDs from './pages/admin/BlockedIDs';
+import Admins from './pages/admin/Admins';
+import EditAbout from './pages/admin/EditAbout';
 import ProjectDetails from './pages/dashboard/ProjectDetails';
 import { useLocation } from 'react-router-dom';
 import PublicRoute from './components/PublicRoute';
@@ -36,6 +36,7 @@ function App() {
               <Route path="/" element={<Home />} />
               <Route path="/login" element={<Login />} />
               <Route path="/signup" element={<Signup />} />
+              <Route path="/about" element={<About />} />
             </Route>
 
             {/* Protected routes for all authenticated users */}
@@ -47,7 +48,6 @@ function App() {
                 <Route path="/history" element={<History />} />
                 <Route path="/ai-analysis" element={<AIAnalysis />} />
                 <Route path="/settings" element={<Settings />} />
-                <Route path="/about" element={<About />} />
               </Route>
             </Route>
 
@@ -88,18 +88,20 @@ const AuthWrapper = ({ children }) => {
 
   useEffect(() => {
     console.log('Current location:', location.pathname);
-    const publicPaths = ['/', '/login', '/signup'];
-    const isPublicPath = publicPaths.includes(location.pathname);
+    const redirectablePublicPaths = ['/', '/login', '/signup']; // Only redirect from these public paths
+    const isRedirectablePublicPath = redirectablePublicPaths.includes(location.pathname);
 
     if (status === 'loading') return;
 
     if (token && user) {
-      if (isPublicPath) {
+      // Only redirect if the user is on a redirectable public path (i.e., not /about)
+      if (isRedirectablePublicPath) {
         const redirectPath = dashboardView === 'admin' ? '/admindash' : '/dashboard';
         console.log(`Redirecting from public path to ${redirectPath}`);
         navigate(redirectPath, { replace: true });
       }
-    } else if (!isPublicPath) {
+    } else if (!redirectablePublicPaths.includes(location.pathname) && location.pathname !== '/about') {
+      // Redirect to login if the user is not authenticated and trying to access a non-public route
       console.log('Redirecting to /login from:', location.pathname);
       navigate('/login', { state: { from: location }, replace: true });
     }

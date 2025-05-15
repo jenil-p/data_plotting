@@ -11,7 +11,8 @@ const mongoose = require('mongoose');
 const authRoutes = require('./routes/authRoutes');
 const projectRoutes = require('./routes/projectRoutes');
 const userRoutes = require('./routes/userRoutes');
-const adminRoutes = require('./routes/adminRoutes'); // Add admin routes
+const adminRoutes = require('./routes/adminRoutes');
+const aboutRoutes = require('./routes/aboutRoutes');
 
 dotenv.config();
 console.log('Environment variables loaded:', {
@@ -95,14 +96,12 @@ app.use((req, res, next) => {
   next();
 });
 
-console.log('Mounting auth routes');
+
 app.use('/api/v1/auth', authRoutes);
-console.log('Mounting project routes');
 app.use('/api/v1/projects', projectRoutes);
-console.log('Mounting user routes');
 app.use('/api/v1/users', userRoutes);
-console.log('Mounting admin routes');
 app.use('/api/v1/admin', adminRoutes);
+app.use('/api/v1/about', aboutRoutes);
 
 app.use((err, req, res, next) => {
   console.error('Error middleware:', err.message, err.stack);

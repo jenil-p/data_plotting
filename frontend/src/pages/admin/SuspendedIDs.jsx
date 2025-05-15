@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { FiUserCheck } from 'react-icons/fi';
 import { toast } from 'react-hot-toast';
-import { getSuspendedUsers, unsuspendUser } from '../api/admin';
+import { getSuspendedUsers, unsuspendUser } from '../../api/admin';
 
 const SuspendedIDs = () => {
   const [suspendedUsers, setSuspendedUsers] = useState([]);

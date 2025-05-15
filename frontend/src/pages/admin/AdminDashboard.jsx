@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { FiUserX, FiTrash2 } from 'react-icons/fi';
 import { toast } from 'react-hot-toast';
-import { getAllUsers, suspendUser, deleteUser } from '../api/admin';
+import { getAllUsers, suspendUser, deleteUser } from '../../api/admin';
 
 const AdminDashboard = () => {
   const [users, setUsers] = useState([]);
