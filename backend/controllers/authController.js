@@ -12,26 +12,23 @@ const signToken = (id) => {
 const createSendToken = (user, statusCode, req, res) => {
   const token = signToken(user._id);
   
-  // Cookie options
   const cookieOptions = {
     expires: new Date(Date.now() + process.env.JWT_COOKIE_EXPIRES * 24 * 60 * 60 * 1000),
     httpOnly: true,
     secure: req.secure || req.headers['x-forwarded-proto'] === 'https',
-    sameSite: 'strict'
+    sameSite: 'strict',
   };
 
-  // Send both cookie and response body
   res.cookie('jwt', token, cookieOptions);
   
-  // Remove password from output
   user.password = undefined;
 
   res.status(statusCode).json({
     status: 'success',
-    token, // Also send token in response body
+    token,
     data: {
-      user
-    }
+      user,
+    },
   });
 };
 
@@ -42,6 +39,7 @@ exports.signup = async (req, res, next) => {
       username: req.body.username,
       email: req.body.email,
       password: req.body.password,
+      role: 'user', // Default role for new users
     });
     createSendToken(newUser, 201, req, res);
   } catch (err) {
@@ -86,42 +84,56 @@ exports.logout = (req, res) => {
 exports.protect = async (req, res, next) => {
   try {
     let token;
-    // 1) Check headers first
     if (req.headers.authorization?.startsWith('Bearer')) {
       token = req.headers.authorization.split(' ')[1];
-    } 
-    // 2) Then check cookies
-    else if (req.cookies?.jwt) {
+    } else if (req.cookies?.jwt) {
       token = req.cookies.jwt;
     }
 
     if (!token) {
       return res.status(401).json({
         status: 'fail',
-        message: 'You are not logged in! Please log in to get access.'
+        message: 'You are not logged in! Please log in to get access.',
       });
     }
 
-    // 3) Verify token
     const decoded = await promisify(jwt.verify)(token, process.env.JWT_SECRET);
     
-    // 4) Check if user still exists
     const currentUser = await User.findById(decoded.id);
     if (!currentUser) {
       return res.status(401).json({
         status: 'fail',
-        message: 'The user belonging to this token does no longer exist.'
+        message: 'The user belonging to this token does no longer exist.',
       });
     }
 
-    // 5) Grant access
+    // Deny access if user is suspended or blocked
+    if (currentUser.status === 'suspended' || currentUser.status === 'blocked') {
+      return res.status(403).json({
+        status: 'fail',
+        message: 'Your account is suspended or blocked. Please contact an admin.',
+      });
+    }
+
     req.user = currentUser;
     next();
   } catch (err) {
     console.error('Protect middleware error:', err.message);
     return res.status(401).json({
       status: 'fail',
-      message: 'Invalid or expired token. Please log in again.'
+      message: 'Invalid or expired token. Please log in again.',
     });
   }
+};
+
+exports.restrictTo = (...roles) => {
+  return (req, res, next) => {
+    if (!roles.includes(req.user.role)) {
+      return res.status(403).json({
+        status: 'fail',
+        message: 'You do not have permission to perform this action',
+      });
+    }
+    next();
+  };
 };

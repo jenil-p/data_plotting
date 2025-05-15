@@ -5,50 +5,51 @@ const projectSchema = new mongoose.Schema({
     type: String,
     required: [true, 'A project must have a name'],
     trim: true,
-    maxlength: [50, 'Project name cannot exceed 50 characters']
+    maxlength: [50, 'Project name cannot exceed 50 characters'],
   },
   user: {
     type: mongoose.Schema.Types.ObjectId,
     ref: 'User',
-    required: true
+    required: true,
   },
   file: {
     originalName: String,
     path: String,
     size: Number,
-    columns: [String]
+    columns: [String],
   },
   charts: [{
     type: {
       type: String,
       enum: ['bar', 'line', 'scatter', 'pie', 'bar3d', 'line3d', 'scatter3d', 'surface'],
-      required: true
+      required: true,
     },
     title: String,
     xAxis: String,
     yAxis: String,
     zAxis: String,
+    dataColumn: String,
     color: {
       type: String,
-      default: '#4F46E5'
+      default: '#4F46E5',
     },
     createdAt: {
       type: Date,
-      default: Date.now
-    }
+      default: Date.now,
+    },
   }],
   lastAccessed: {
     type: Date,
-    default: Date.now
-  }
+    default: Date.now,
+  },
 }, {
-  timestamps: true
+  timestamps: true,
 });
 
-// Update lastAccessed timestamp when project is queried
 projectSchema.pre(/^findOne|^find$/, function(next) {
   this.set({ lastAccessed: Date.now() });
   next();
 });
 
-module.exports = projectSchema;
+const Project = mongoose.model('Project', projectSchema);
+module.exports = Project;

@@ -17,6 +17,9 @@ router.route('/:id')
   .get(projectController.getProject)
   .delete(projectController.deleteProject);
 
+router.route('/:id/charts/:chartId')
+  .delete(projectController.deleteChart);
+
 router.route('/:id/file')
   .get(projectController.getFileData);
 

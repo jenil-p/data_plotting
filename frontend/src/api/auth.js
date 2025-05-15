@@ -21,17 +21,6 @@ export const logout = async () => {
   return response;
 };
 
-// export const getMe = async () => {
-//   const token = localStorage.getItem('token');
-//   console.log('getMe request with token:', token);
-//   const response = await API.get('/users/me', {
-//     headers: {
-//       Authorization: `Bearer ${token}`,
-//     },
-//   });
-//   return response;
-// };
-
 export const getMe = async () => {
   try {
     const token = localStorage.getItem('token');
@@ -55,14 +44,5 @@ export const getMe = async () => {
 
 export const updateUsername = async (username) => {
   const response = await API.patch('/users/update-username', { username });
-  return response;
-};
-
-export const updateProfilePicture = async (formData) => {
-  const response = await API.patch('/users/update-profile-picture', formData, {
-    headers: {
-      'Content-Type': 'multipart/form-data',
-    },
-  });
   return response;
 };

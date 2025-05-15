@@ -29,6 +29,11 @@ export const addChart = async (projectId, chartData) => {
   return response.data;
 };
 
+export const deleteChart = async (projectId, chartId) => {
+  const response = await API.delete(`/projects/${projectId}/charts/${chartId}`);
+  return response.data;
+};
+
 export const deleteProject = async (id) => {
   const response = await API.delete(`/projects/${id}`);
   return response.data;

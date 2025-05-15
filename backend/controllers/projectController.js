@@ -166,7 +166,7 @@ exports.getAllProjects = async (req, res, next) => {
 
 exports.addChartToProject = async (req, res, next) => {
   try {
-    const { type, title, xAxis, yAxis, zAxis, color } = req.body;
+    const { type, title, xAxis, yAxis, zAxis, dataColumn, color } = req.body;
 
     const project = await Project.findOneAndUpdate(
       { _id: req.params.id, user: req.user.id },
@@ -178,6 +178,7 @@ exports.addChartToProject = async (req, res, next) => {
             xAxis,
             yAxis,
             zAxis,
+            dataColumn, // Add dataColumn for pie charts
             color
           }
         }
@@ -200,6 +201,40 @@ exports.addChartToProject = async (req, res, next) => {
     });
   } catch (err) {
     next(err);
+  }
+};
+
+exports.deleteChart = async (req, res, next) => {
+  try {
+    const { chartId } = req.params;
+
+    const project = await Project.findOneAndUpdate(
+      { _id: req.params.id, user: req.user.id },
+      {
+        $pull: { charts: { _id: chartId } }
+      },
+      { new: true }
+    );
+
+    if (!project) {
+      return res.status(404).json({
+        status: 'fail',
+        message: 'No project found with that ID'
+      });
+    }
+
+    res.status(200).json({
+      status: 'success',
+      data: {
+        project
+      }
+    });
+  } catch (err) {
+    console.error('Error deleting chart:', err.message);
+    res.status(400).json({
+      status: 'fail',
+      message: err.message
+    });
   }
 };
 

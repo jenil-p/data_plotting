@@ -1,1 +1,16 @@
 @import "tailwindcss";
+@keyframes fade-in {
+  from { opacity: 0; transform: translateY(10px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+.animate-fade-in {
+  animation: fade-in 1s ease-out;
+}
+.Toastify__toast {
+  border-radius: 8px;
+  font-family: inherit;
+}
+.Toastify__toast--error {
+  background: #fee2e2;
+  color: #b91c1c;
+}
