@@ -5,8 +5,8 @@ import { Chart as ChartJS, ArcElement, Tooltip, Legend } from 'chart.js';
 ChartJS.register(ArcElement, Tooltip, Legend);
 
 const PieChart = ({ chart, data }) => {
-  console.log('PieChart props - chart:', chart);
-  console.log('PieChart props - data:', data);
+  // console.log('PieChart props - chart:', chart);
+  // console.log('PieChart props - data:', data);
 
   if (!data || data.length === 0) {
     return <p className="text-gray-500 text-center py-4">No data available to render chart.</p>;
@@ -38,8 +38,8 @@ const PieChart = ({ chart, data }) => {
     }]
   };
 
-  console.log("chartdata",chartData);
-  console.log("data",data);
+  // console.log("chartdata",chartData);
+  // console.log("data",data);
 
   const options = {
     responsive: true,

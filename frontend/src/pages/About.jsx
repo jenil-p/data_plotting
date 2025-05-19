@@ -44,7 +44,7 @@ const About = () => {
           About PlotPilot
         </h1>
         <p className="text-lg md:text-xl text-gray-600 max-w-2xl mx-auto animate-fade-in-up">
-          Discover the story behind PlotPilot and the team that’s making data visualization accessible to everyone.
+          Discover the story behind PlotPilot and the team that's making data visualization accessible to everyone.
         </p>
       </div>
 

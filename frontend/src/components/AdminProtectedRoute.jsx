@@ -14,7 +14,7 @@ const AdminProtectedRoute = () => {
   const isAdmin = user?.role === 'admin'; // Assuming user object has a 'role' field
 
   if (!isAdmin) {
-    console.log('User is not an admin, redirecting to /dashboard');
+    // console.log('User is not an admin, redirecting to /dashboard');
     return <Navigate to="/dashboard" replace />;
   }
 

@@ -121,12 +121,12 @@ const ProjectDetails = () => {
         )
       };
 
-      console.log('Chart data being sent to API:', chartData);
+      // console.log('Chart data being sent to API:', chartData);
 
       const response = await addChart(id, chartData);
-      console.log('API Response:', response.data);
+      // console.log('API Response:', response.data);
       setCharts(response.data.project.charts);
-      console.log('Updated charts:', response.data.project.charts);
+      // console.log('Updated charts:', response.data.project.charts);
       toast.success('Chart added successfully');
 
       setChartForm({
@@ -178,7 +178,7 @@ const ProjectDetails = () => {
     }
 
     if (chart.type === 'pie') {
-      console.log('Rendering pie chart:', chart);
+      // console.log('Rendering pie chart:', chart);
       let selectedColumn = chart.dataColumn;
 
       // Fallback for existing pie charts created before backend fix
@@ -199,7 +199,7 @@ const ProjectDetails = () => {
         .map(row => row[selectedColumn])
         .filter(value => value !== undefined && value !== null);
 
-      console.log(`Pie chart data for column "${selectedColumn}":`, pieData);
+      // console.log(`Pie chart data for column "${selectedColumn}":`, pieData);
 
       if (pieData.length === 0) {
         console.warn(`No valid data found for column "${selectedColumn}"`);

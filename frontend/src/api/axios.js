@@ -15,13 +15,13 @@ API.interceptors.request.use((config) => {
 
 API.interceptors.response.use(
   (response) => {
-    console.log('API Success:', response.config.url, response.data);
+    // console.log('API Success:', response.config.url, response.data);
     return response;
   },
   (error) => {
     console.error('API Error:', error.config?.url, error.response?.status);
     if (error.response?.status === 401) {
-      console.log('Clearing invalid token');
+      // console.log('Clearing invalid token');
       localStorage.removeItem('token');
     }
     return Promise.reject(error);

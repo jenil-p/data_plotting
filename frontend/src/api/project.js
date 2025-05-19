@@ -1,10 +1,10 @@
 import API from './axios';
 
 export const createProject = async (formData) => {
-  console.log('createProject FormData:', {
-    file: formData.get('file')?.name,
-    name: formData.get('name'),
-  });
+  // console.log('createProject FormData:', {
+  //   file: formData.get('file')?.name,
+  //   name: formData.get('name'),
+  // });
   const response = await API.post('/projects', formData);
   return response.data;
 };

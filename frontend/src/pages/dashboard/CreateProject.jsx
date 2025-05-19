@@ -12,7 +12,7 @@ const CreateProject = () => {
   const navigate = useNavigate();
   const user = useSelector((state) => state.auth.user);
 
-  console.log('CreateProject component rendered, user state:', user);
+  // console.log('CreateProject component rendered, user state:', user);
 
   const handleFileChange = (e) => {
     const selectedFile = e.target.files[0];
@@ -42,13 +42,13 @@ const CreateProject = () => {
       formData.append('file', file);
       if (projectName) formData.append('name', projectName);
 
-      console.log('Submitting project with FormData:', {
-        file: file.name,
-        name: projectName,
-      });
+      // console.log('Submitting project with FormData:', {
+      //   file: file.name,
+      //   name: projectName,
+      // });
 
       const response = await createProject(formData);
-      console.log('createProject response:', response);
+      // console.log('createProject response:', response);
 
       if (!response.data?.project?._id) {
         throw new Error('Project ID not found in response');
@@ -56,12 +56,12 @@ const CreateProject = () => {
 
       toast.success('Project created successfully!');
       const projectId = response.data.project._id;
-      console.log('Navigating to project details:', `/dashboard/${projectId}`);
+      // console.log('Navigating to project details:', `/dashboard/${projectId}`);
 
       // Add a slight delay to ensure state updates are processed
       setTimeout(() => {
         navigate(`/dashboard/${projectId}`);
-        console.log('Navigation called');
+        // console.log('Navigation called');
       }, 3000);
 
       // Reset form

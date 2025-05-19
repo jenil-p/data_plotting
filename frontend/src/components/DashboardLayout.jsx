@@ -72,9 +72,8 @@ const DashboardLayout = () => {
               <li key={index} className="mb-2">
                 <Link
                   to={item.path}
-                  className={`flex items-center p-3 hover:bg-gray-700 rounded-lg mx-2 ${
-                    location.pathname === item.path ? 'bg-gray-700' : ''
-                  }`}
+                  className={`flex items-center p-3 hover:bg-gray-700 rounded-lg mx-2 ${location.pathname === item.path ? 'bg-gray-700' : ''
+                    }`}
                 >
                   <span className="text-xl">{item.icon}</span>
                   {sidebarOpen && <span className="ml-3">{item.name}</span>}
@@ -136,9 +135,11 @@ const DashboardLayout = () => {
               >
                 Logout
               </button>
-              <div className="h-8 w-8 rounded-full bg-gray-600 flex items-center justify-center text-white">
-                {user?.username?.charAt(0).toUpperCase() || 'U'}
-              </div>
+              <Link to={"/settings"}>
+                <div className="h-8 w-8 rounded-full bg-gray-600 flex items-center justify-center text-white">
+                  {user?.username?.charAt(0).toUpperCase() || 'U'}
+                </div>
+              </Link>
             </div>
           </div>
         </header>
