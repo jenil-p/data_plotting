@@ -1,13 +1,11 @@
-import React from 'react';
+import React, { forwardRef } from 'react';
 import { Pie } from 'react-chartjs-2';
 import { Chart as ChartJS, ArcElement, Tooltip, Legend } from 'chart.js';
 
 ChartJS.register(ArcElement, Tooltip, Legend);
 
-const PieChart = ({ chart, data }) => {
-  // console.log('PieChart props - chart:', chart);
-  // console.log('PieChart props - data:', data);
-
+// Use forwardRef to pass the ref to the Pie component
+const PieChart = forwardRef(({ chart, data }, ref) => {
   if (!data || data.length === 0) {
     return <p className="text-gray-500 text-center py-4">No data available to render chart.</p>;
   }
@@ -38,22 +36,31 @@ const PieChart = ({ chart, data }) => {
     }]
   };
 
-  // console.log("chartdata",chartData);
-  // console.log("data",data);
-
   const options = {
     responsive: true,
     plugins: {
       legend: {
         position: 'right',
+        labels: {
+          font: { size: 14, family: 'Inter' },
+          color: '#1F2937',
+        },
       },
       title: {
         display: !!chart.title,
         text: chart.title,
+        font: { size: 18, weight: 'bold', family: 'Inter' },
+        color: '#1F2937',
+        padding: { top: 10, bottom: 20 },
       },
       tooltip: {
+        backgroundColor: '#1F2937',
+        titleFont: { size: 14, family: 'Inter' },
+        bodyFont: { size: 12, family: 'Inter' },
+        cornerRadius: 8,
+        // Simplify the tooltip callback to avoid recursion
         callbacks: {
-          label: function(context) {
+          label: (context) => {
             const label = context.label || '';
             const value = context.raw || 0;
             const total = context.dataset.data.reduce((acc, data) => acc + data, 0);
@@ -67,10 +74,14 @@ const PieChart = ({ chart, data }) => {
   };
 
   return (
-    <div className="w-full h-[450px]">
-      <Pie data={chartData} options={options} />
+    <div className="w-full h-[450px] bg-white">
+      <Pie
+        ref={ref}
+        data={chartData}
+        options={options}
+      />
     </div>
   );
-};
+});
 
 export default PieChart;

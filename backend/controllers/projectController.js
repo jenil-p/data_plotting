@@ -8,29 +8,35 @@ const unlink = promisify(fs.unlink);
 
 // Helper to parse uploaded file
 const parseFile = async (filePath, originalName) => {
-  console.log('Parsing file:', { filePath, originalName });
-  const ext = originalName.split('.').pop().toLowerCase();
-  
-  if (ext === 'csv') {
-    const results = [];
-    return new Promise((resolve, reject) => {
-      fs.createReadStream(filePath)
-        .pipe(csv())
-        .on('data', (data) => results.push(data))
-        .on('end', () => {
-          const columns = results.length > 0 ? Object.keys(results[0]) : [];
-          resolve({ data: results, columns });
-        })
-        .on('error', reject);
-    });
-  } else if (['xlsx', 'xls'].includes(ext)) {
-    const workbook = xlsx.readFile(filePath);
-    const sheetName = workbook.SheetNames[0];
-    const data = xlsx.utils.sheet_to_json(workbook.Sheets[sheetName]);
-    const columns = data.length > 0 ? Object.keys(data[0]) : [];
-    return { data, columns };
+  try {
+    console.log('Parsing file:', { filePath, originalName });
+    const ext = originalName.split('.').pop().toLowerCase();
+    
+    if (ext === 'csv') {
+      const results = [];
+      return new Promise((resolve, reject) => {
+        fs.createReadStream(filePath)
+          .pipe(csv())
+          .on('data', (data) => results.push(data))
+          .on('end', () => {
+            const columns = results.length > 0 ? Object.keys(results[0]) : [];
+            resolve({ data: results, columns });
+          })
+          .on('error', (error) => {
+            reject(new Error(`Failed to parse CSV file: ${error.message}`));
+          });
+      });
+    } else if (['xlsx', 'xls'].includes(ext)) {
+      const workbook = xlsx.readFile(filePath);
+      const sheetName = workbook.SheetNames[0];
+      const data = xlsx.utils.sheet_to_json(workbook.Sheets[sheetName]);
+      const columns = data.length > 0 ? Object.keys(data[0]) : [];
+      return { data, columns };
+    }
+    throw new Error('Unsupported file format');
+  } catch (err) {
+    throw new Error(`File parsing error: ${err.message}`);
   }
-  throw new Error('Unsupported file format');
 };
 
 // Update createProject controller
@@ -274,3 +280,4 @@ exports.deleteProject = async (req, res, next) => {
 };
 
 console.log('projectController exports:', Object.keys(module.exports));
+module.exports.parseFile = parseFile;

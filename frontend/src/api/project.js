@@ -38,3 +38,8 @@ export const deleteProject = async (id) => {
   const response = await API.delete(`/projects/${id}`);
   return response.data;
 };
+
+export const sendAIChatMessage = async (projectId, message) => {
+  const response = await API.post('/openai/chat', { projectId, message });
+  return response.data;
+};

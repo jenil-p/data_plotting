@@ -1,8 +1,8 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useState, useRef } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import { toast } from 'react-hot-toast';
 import { getProject, getFileData, addChart, deleteProject, deleteChart } from '../../api/project';
-import { FiTrash2, FiPlus } from 'react-icons/fi';
+import { FiTrash2, FiPlus, FiDownload } from 'react-icons/fi';
 import { Bar, Line, Scatter, Pie } from 'react-chartjs-2';
 import {
   Chart as ChartJS,
@@ -17,6 +17,7 @@ import {
 } from 'chart.js';
 import ThreeChart from './ThreeChart';
 import PieChart from './PieChart';
+import ChatBoard from '../../components/Chatboard';
 import '../../App.css';
 
 // Register Chart.js components
@@ -48,6 +49,9 @@ const ProjectDetails = () => {
     dataColumn: '',
     color: '#4F46E5',
   });
+
+  // Create refs for each chart type to access Chart.js instances
+  const chartRefs = useRef({});
 
   useEffect(() => {
     const fetchProject = async () => {
@@ -121,12 +125,8 @@ const ProjectDetails = () => {
         )
       };
 
-      // console.log('Chart data being sent to API:', chartData);
-
       const response = await addChart(id, chartData);
-      // console.log('API Response:', response.data);
       setCharts(response.data.project.charts);
-      // console.log('Updated charts:', response.data.project.charts);
       toast.success('Chart added successfully');
 
       setChartForm({
@@ -170,6 +170,38 @@ const ProjectDetails = () => {
     }
   };
 
+  // Function to handle chart download with white background
+  const handleDownloadChart = (chartId, chartTitle, chartType) => {
+    const chartInstance = chartRefs.current[chartId];
+    if (chartInstance) {
+      // Create a temporary canvas to draw the chart with a white background
+      const tempCanvas = document.createElement('canvas');
+      tempCanvas.width = chartInstance.width;
+      tempCanvas.height = chartInstance.height;
+      const tempCtx = tempCanvas.getContext('2d');
+
+      // Draw a white background on the temporary canvas
+      tempCtx.fillStyle = '#ffffff';
+      tempCtx.fillRect(0, 0, tempCanvas.width, tempCanvas.height);
+
+      // Draw the chart's canvas onto the temporary canvas
+      tempCtx.drawImage(chartInstance.canvas, 0, 0);
+
+      // Generate the image from the temporary canvas
+      const base64Image = tempCanvas.toDataURL('image/png');
+
+      // Trigger the download
+      const link = document.createElement('a');
+      link.href = base64Image;
+      link.download = `${chartTitle || 'chart'}.png`;
+      document.body.appendChild(link);
+      link.click();
+      document.body.removeChild(link);
+    } else {
+      toast.error('Failed to download chart');
+    }
+  };
+
   const renderChart = (chart, index) => {
     const data = fullData;
 
@@ -178,13 +210,11 @@ const ProjectDetails = () => {
     }
 
     if (chart.type === 'pie') {
-      // console.log('Rendering pie chart:', chart);
       let selectedColumn = chart.dataColumn;
 
-      // Fallback for existing pie charts created before backend fix
       if (!selectedColumn) {
         console.warn('No dataColumn specified for pie chart:', chart);
-        selectedColumn = project?.file?.columns?.[0]; // Fallback to first column
+        selectedColumn = project?.file?.columns?.[0];
         if (!selectedColumn) {
           return (
             <p className="text-gray-500 text-center py-4">
@@ -192,14 +222,11 @@ const ProjectDetails = () => {
             </p>
           );
         }
-        // toast.warn(`Pie chart "${chart.title || 'Untitled'}" (ID: ${chart._id}) is missing a data column. Using default column "${selectedColumn}". Please update or delete this chart.`);
       }
 
       const pieData = data
         .map(row => row[selectedColumn])
         .filter(value => value !== undefined && value !== null);
-
-      // console.log(`Pie chart data for column "${selectedColumn}":`, pieData);
 
       if (pieData.length === 0) {
         console.warn(`No valid data found for column "${selectedColumn}"`);
@@ -217,16 +244,27 @@ const ProjectDetails = () => {
         >
           <button
             onClick={() => handleDeleteChart(chart._id)}
-            className="absolute cursor-pointer top-4 right-4 p-2 text-red-500 hover:bg-red-50 hover:text-red-700 rounded-full transition-all duration-200"
+            className="absolute cursor-pointer z-50 top-4 right-4 p-2 text-red-500 hover:bg-red-50 hover:text-red-700 rounded-full transition-all duration-200"
           >
             <FiTrash2 size={20} />
           </button>
-          <PieChart chart={chart} data={pieData} />
+          <button
+            onClick={() => handleDownloadChart(chart._id, chart.title || 'pie-chart', chart.type)}
+            className="absolute cursor-pointer z-50 top-4 right-14 p-2 text-blue-500 hover:bg-blue-50 hover:text-blue-700 rounded-full transition-all duration-200"
+          >
+            <FiDownload size={20} />
+          </button>
+          <div className="w-full h-[450px]">
+            <PieChart
+              chart={chart}
+              data={pieData}
+              ref={(el) => (chartRefs.current[chart._id] = el)}
+            />
+          </div>
         </div>
       );
     }
 
-    // Handle other chart types (bar, line, scatter, 3D)
     const labels = data.map(row => row[chart.xAxis] || '');
     const datasetData = data.map(row => {
       const value = row[chart.yAxis];
@@ -289,24 +327,43 @@ const ProjectDetails = () => {
       >
         <button
           onClick={() => handleDeleteChart(chart._id)}
-          className="absolute cursor-pointer top-4 right-4 p-2 text-red-500 hover:bg-red-50 hover:text-red-700 rounded-full transition-all duration-200"
+          className="absolute cursor-pointer z-50 top-4 right-4 p-2 text-red-500 hover:bg-red-50 hover:text-red-700 rounded-full transition-all duration-200"
         >
           <FiTrash2 size={20} />
         </button>
-
+        {!(chart.type.includes('3d')) && (
+          <button
+            onClick={() => handleDownloadChart(chart._id, chart.title || `${chart.type}-chart`, chart.type)}
+            className="absolute cursor-pointer z-50 top-4 right-14 p-2 text-blue-500 hover:bg-blue-50 hover:text-blue-700 rounded-full transition-all duration-200"
+          >
+            <FiDownload size={20} />
+          </button>
+        )}
         {chart.type === 'bar' && (
           <div className="w-full h-[450px]">
-            <Bar data={chartData} options={options} />
+            <Bar
+              data={chartData}
+              options={options}
+              ref={(el) => (chartRefs.current[chart._id] = el)}
+            />
           </div>
         )}
         {chart.type === 'line' && (
           <div className="w-full h-[450px]">
-            <Line data={chartData} options={options} />
+            <Line
+              data={chartData}
+              options={options}
+              ref={(el) => (chartRefs.current[chart._id] = el)}
+            />
           </div>
         )}
         {chart.type === 'scatter' && (
           <div className="w-full h-[450px]">
-            <Scatter data={chartData} options={options} />
+            <Scatter
+              data={chartData}
+              options={options}
+              ref={(el) => (chartRefs.current[chart._id] = el)}
+            />
           </div>
         )}
         {(chart.type === 'bar3d' || chart.type === 'line3d' || chart.type === 'scatter3d') && (
@@ -488,6 +545,11 @@ const ProjectDetails = () => {
             <FiPlus className="mr-2" /> Add Chart
           </button>
         </form>
+      </div>
+
+      {/* AI Chat Board */}
+      <div className="mb-10">
+        <ChatBoard projectId={id} columns={project?.file?.columns || []} data={fullData} />
       </div>
 
       {/* Render Charts */}
