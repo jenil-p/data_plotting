@@ -38,6 +38,13 @@ const projectSchema = new mongoose.Schema({
       default: Date.now,
     },
   }],
+  chatHistory: [
+    {
+      message: String,
+      reply: String,
+      timestamp: { type: Date, default: Date.now },
+    },
+  ],
   lastAccessed: {
     type: Date,
     default: Date.now,

@@ -34,7 +34,6 @@ const createSendToken = (user, statusCode, req, res) => {
 
 exports.signup = async (req, res, next) => {
   try {
-    console.log('Signup request:', req.body);
     const newUser = await User.create({
       username: req.body.username,
       email: req.body.email,
@@ -53,7 +52,6 @@ exports.signup = async (req, res, next) => {
 
 exports.login = async (req, res, next) => {
   try {
-    console.log('Login attempt:', req.body);
     const { email, password } = req.body;
     if (!email || !password) {
       throw new Error('Please provide email and password');
@@ -62,7 +60,6 @@ exports.login = async (req, res, next) => {
     if (!user || !(await user.correctPassword(password, user.password))) {
       throw new Error('Incorrect email or password');
     }
-    console.log('Login successful:', { email });
     createSendToken(user, 200, req, res);
   } catch (err) {
     console.error('Login error:', err.message);

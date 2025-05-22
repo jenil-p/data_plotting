@@ -2,7 +2,6 @@ const { User } = require('../models');
 
 exports.getMe = async (req, res, next) => {
   try {
-    console.log('getMe request for user:', req.user._id);
     const user = await User.findById(req.user._id).populate('projects', 'name');
     if (!user) {
       throw new Error('User not found');

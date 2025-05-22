@@ -16,14 +16,6 @@ const aboutRoutes = require('./routes/aboutRoutes');
 const openaiRoutes = require('./routes/openai')
 
 dotenv.config();
-console.log('Environment variables loaded:', {
-  PORT: process.env.PORT,
-  MONGO_URI: process.env.MONGO_URI,
-  JWT_SECRET: process.env.JWT_SECRET,
-  JWT_EXPIRES_IN: process.env.JWT_EXPIRES_IN,
-  JWT_COOKIE_EXPIRES: process.env.JWT_COOKIE_EXPIRES,
-  NODE_ENV: process.env.NODE_ENV,
-});
 
 const app = express();
 
@@ -90,10 +82,10 @@ app.use(cookieParser());
 app.use(morgan('dev'));
 
 app.use((req, res, next) => {
-  console.log(`Request: ${req.method} ${req.url}`);
-  console.log('Query:', req.query);
-  console.log('Body:', req.body);
-  console.log('File:', req.file);
+  // console.log(`Request: ${req.method} ${req.url}`);
+  // console.log('Query:', req.query);
+  // console.log('Body:', req.body);
+  // console.log('File:', req.file);
   next();
 });
 

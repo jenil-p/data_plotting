@@ -43,29 +43,40 @@ const ChatBoard = ({ projectId, columns, data }) => {
   };
 
   return (
-    <div className="bg-white rounded-2xl shadow-xl border border-gray-100 p-8">
-      <h2 className="text-2xl font-semibold text-gray-900 mb-6">AI Data Analysis</h2>
-      <div className="mb-4 text-gray-600">
-        <p>Ask questions about your data. Available columns: {columns.join(', ')}</p>
-        <p className="text-sm mt-1">Example: "What is the average value of [column_name]?" or "Summarize trends in the data."</p>
+    <div className="bg-gradient-to-br from-white to-gray-50 rounded-2xl shadow-2xl border border-gray-100 p-8 max-w-2xl mx-auto transition-all duration-300 hover:shadow-3xl">
+      <h2 className="text-3xl font-bold text-gray-900 mb-6 tracking-tight">
+        AI Data Analysis
+      </h2>
+      <div className="mb-6 text-gray-700">
+        <p className="text-lg font-medium">
+          Ask questions about your data. Available columns:{' '}
+          <span className="text-indigo-600">{columns.join(', ')}</span>
+        </p>
+        <p className="text-sm mt-2 text-gray-500 italic">
+          Example: "What is the average value of [column_name]?" or "Summarize trends in the data."
+        </p>
       </div>
       <div
         ref={chatContainer}
-        className="h-96 overflow-y-auto mb-4 p-4 bg-gray-50 rounded-xl border border-gray-200"
+        className="h-96 overflow-y-auto mb-6 p-6 bg-gray-100 rounded-xl border border-gray-200 scrollbar-thin scrollbar-thumb-indigo-400 scrollbar-track-gray-200"
       >
         {messages.length === 0 ? (
-          <p className="text-gray-500 text-center py-4">Start the conversation by asking a question about your data!</p>
+          <p className="text-gray-500 text-center py-4 text-lg">
+            Start the conversation by asking a question about your data! 🚀
+          </p>
         ) : (
           messages.map((msg, index) => (
             <div
               key={index}
-              className={`mb-4 flex ${msg.role === 'user' ? 'justify-end' : 'justify-start'}`}
+              className={`mb-4 flex ${
+                msg.role === 'user' ? 'justify-end' : 'justify-start'
+              } animate-fadeIn`}
             >
               <div
-                className={`max-w-xs md:max-w-md p-3 rounded-lg ${
+                className={`max-w-xs md:max-w-md p-4 rounded-2xl shadow-md transition-all duration-200 ${
                   msg.role === 'user'
-                    ? 'bg-blue-600 text-white'
-                    : 'bg-gray-200 text-gray-800'
+                    ? 'bg-indigo-600 text-white'
+                    : 'bg-white text-gray-800 border border-gray-200'
                 }`}
               >
                 {msg.content}
@@ -73,22 +84,39 @@ const ChatBoard = ({ projectId, columns, data }) => {
             </div>
           ))
         )}
+        {/* Typing animation when AI is thinking */}
+        {isLoading && (
+          <div className="flex justify-start mb-4">
+            <div className="max-w-xs md:max-w-md p-4 rounded-2xl bg-white border border-gray-200 shadow-md flex items-center space-x-2">
+              <span className="text-gray-500">AI is thinking</span>
+              <div className="flex space-x-1">
+                <span className="w-2 h-2 bg-indigo-500 rounded-full animate-bounce1"></span>
+                <span className="w-2 h-2 bg-indigo-500 rounded-full animate-bounce2"></span>
+                <span className="w-2 h-2 bg-indigo-500 rounded-full animate-bounce3"></span>
+              </div>
+            </div>
+          </div>
+        )}
       </div>
-      <form onSubmit={handleSendMessage} className="flex items-center">
+      <form onSubmit={handleSendMessage} className="flex items-center space-x-3">
         <input
           type="text"
           value={input}
           onChange={(e) => setInput(e.target.value)}
           placeholder="Ask about your data..."
-          className="flex-1 p-3 border border-gray-300 rounded-xl focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 bg-gray-50 text-gray-900"
+          className="flex-1 p-4 border border-gray-300 rounded-xl focus:ring-2 focus:ring-indigo-600 focus:border-indigo-600 bg-white text-gray-900 shadow-sm transition-all duration-200 hover:shadow-md"
           disabled={isLoading}
         />
         <button
           type="submit"
           disabled={isLoading}
-          className="ml-2 bg-blue-700 text-white p-3 rounded-xl hover:bg-blue-800 transition-all duration-200 disabled:opacity-50"
+          className="bg-indigo-700 text-white p-4 rounded-xl hover:bg-indigo-800 transition-all duration-200 disabled:opacity-50 shadow-md hover:shadow-lg"
         >
-          {isLoading ? <FiLoader className="animate-spin" /> : <FiSend />}
+          {isLoading ? (
+            <FiLoader className="animate-spin text-xl" />
+          ) : (
+            <FiSend className="text-xl" />
+          )}
         </button>
       </form>
     </div>

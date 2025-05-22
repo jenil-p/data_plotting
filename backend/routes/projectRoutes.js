@@ -3,7 +3,6 @@ const projectController = require('../controllers/projectController');
 const authController = require('../controllers/authController');
 const fileUpload = require('../utils/fileUpload');
 
-console.log('projectController imported:', Object.keys(projectController));
 
 const router = express.Router();
 

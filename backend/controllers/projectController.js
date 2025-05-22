@@ -9,7 +9,6 @@ const unlink = promisify(fs.unlink);
 // Helper to parse uploaded file
 const parseFile = async (filePath, originalName) => {
   try {
-    console.log('Parsing file:', { filePath, originalName });
     const ext = originalName.split('.').pop().toLowerCase();
     
     if (ext === 'csv') {
@@ -106,9 +105,7 @@ exports.getFileData = async (req, res, next) => {
       });
     }
 
-    console.log('Reading file for project:', project.file);
     const { data, columns } = await parseFile(project.file.path, project.file.originalName);
-    console.log('File parsed successfully, data length:', data.length, 'columns:', columns);
 
     res.status(200).json({
       status: 'success',
@@ -279,5 +276,4 @@ exports.deleteProject = async (req, res, next) => {
   }
 };
 
-console.log('projectController exports:', Object.keys(module.exports));
 module.exports.parseFile = parseFile;

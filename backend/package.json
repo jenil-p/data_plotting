@@ -30,6 +30,7 @@
     "openai": "^4.101.0",
     "path-to-regexp": "^8.2.0",
     "sanitize-html": "^2.16.0",
+    "together-ai": "^0.16.0",
     "xlax": "^0.0.5",
     "xlsx": "^0.18.5",
     "xss-clean": "^0.1.4"
