@@ -1,13 +1,14 @@
 import React, { useState } from 'react';
-import { FiFilePlus, FiClock, FiBarChart2, FiSettings, FiInfo, FiShield, FiUsers, FiEdit, FiUser } from 'react-icons/fi';
-import { RiCloseLine } from 'react-icons/ri';
+import { FiFilePlus, FiClock, FiBarChart2, FiSettings, FiShield, FiUsers, FiEdit, FiUser, FiMenu, FiX } from 'react-icons/fi';
 import { Link, Outlet, useNavigate, useLocation } from 'react-router-dom';
 import { useDispatch, useSelector } from 'react-redux';
 import { logoutUser, setDashboardView } from '../features/auth/authSlice';
 import { selectDashboardView } from '../features/auth/authSlice';
+import '../App.css'
 
 const DashboardLayout = () => {
   const [sidebarOpen, setSidebarOpen] = useState(true);
+  const [mobileSidebarOpen, setMobileSidebarOpen] = useState(false);
   const navigate = useNavigate();
   const dispatch = useDispatch();
   const location = useLocation();
@@ -36,7 +37,6 @@ const DashboardLayout = () => {
     { name: 'History', icon: <FiClock />, path: '/history' },
     { name: 'AI Analysis', icon: <FiBarChart2 />, path: '/ai-analysis' },
     { name: 'Account Settings', icon: <FiSettings />, path: '/settings' },
-    { name: 'About Us', icon: <FiInfo />, path: '/about' },
   ];
 
   const adminMenuItems = [
@@ -51,19 +51,32 @@ const DashboardLayout = () => {
 
   return (
     <div className="flex h-screen bg-gray-50">
-      {/* Sidebar */}
-      <div className={`${sidebarOpen ? 'w-64' : 'w-20'} bg-gray-800 text-white transition-all duration-300 ease-in-out`}>
+      {/* Mobile Sidebar Toggle Button */}
+      <button
+        className="sm:block md:hidden fixed top-14 left-1 z-50 p-2 bg-gray-800 text-white rounded-lg hover:bg-gray-700"
+        onClick={() => setMobileSidebarOpen(true)}
+        aria-label="Open sidebar"
+      >
+        <FiMenu className="h-4 w-4" />
+      </button>
+
+      {/* Sidebar (Tablet/Desktop) */}
+      <div
+        className={`
+          hidden md:block
+          ${sidebarOpen ? 'w-64' : 'w-20'}
+          bg-gray-800 text-white transition-all duration-300 ease-in-out
+        `}
+      >
         <div className="flex items-center justify-between p-4 border-b border-gray-700">
           {sidebarOpen && (
-            <Link to="/">
-              <h1 className="text-xl font-bold">PlotPilot</h1>
-            </Link>
+            <h1 className="text-xl font-bold">PlotPilot</h1>
           )}
           <button
             onClick={() => setSidebarOpen(!sidebarOpen)}
             className="p-1 rounded-lg hover:bg-gray-700"
           >
-            <RiCloseLine className="w-5 h-5" />
+            <FiX className="w-5 h-5" />
           </button>
         </div>
         <nav className="mt-6">
@@ -72,8 +85,9 @@ const DashboardLayout = () => {
               <li key={index} className="mb-2">
                 <Link
                   to={item.path}
-                  className={`flex items-center p-3 hover:bg-gray-700 rounded-lg mx-2 ${location.pathname === item.path ? 'bg-gray-700' : ''
-                    }`}
+                  className={`flex items-center p-3 hover:bg-gray-700 rounded-lg mx-2 ${
+                    location.pathname === item.path ? 'bg-gray-700' : ''
+                  }`}
                 >
                   <span className="text-xl">{item.icon}</span>
                   {sidebarOpen && <span className="ml-3">{item.name}</span>}
@@ -84,11 +98,55 @@ const DashboardLayout = () => {
         </nav>
       </div>
 
+      {/* Mobile Sidebar Modal */}
+      {mobileSidebarOpen && (
+        <>
+          <div
+            className="fixed inset-0 bg-black bg-opacity-50 z-40 md:hidden"
+            onClick={() => setMobileSidebarOpen(false)}
+          ></div>
+          <div
+            className="fixed inset-0 flex items-center justify-center z-40 md:hidden"
+          >
+            <div className="w-64 bg-gray-800 text-white rounded-lg shadow-xl animate-modal-open">
+              <div className="flex items-center justify-between p-4 border-b border-gray-700">
+                <h1 className="text-xl font-bold">PlotPilot</h1>
+                <button
+                  onClick={() => setMobileSidebarOpen(false)}
+                  className="p-1 rounded-lg hover:bg-gray-700"
+                  aria-label="Close sidebar"
+                >
+                  <FiX className="w-5 h-5" />
+                </button>
+              </div>
+              <nav className="mt-6">
+                <ul>
+                  {menuItems.map((item, index) => (
+                    <li key={index} className="mb-2">
+                      <Link
+                        to={item.path}
+                        className={`flex items-center p-3 hover:bg-gray-700 rounded-lg mx-2 ${
+                          location.pathname === item.path ? 'bg-gray-700' : ''
+                        }`}
+                        onClick={() => setMobileSidebarOpen(false)}
+                      >
+                        <span className="text-xl">{item.icon}</span>
+                        <span className="ml-3">{item.name}</span>
+                      </Link>
+                    </li>
+                  ))}
+                </ul>
+              </nav>
+            </div>
+          </div>
+        </>
+      )}
+
       {/* Main Content Area */}
       <div className="flex-1 flex flex-col overflow-hidden">
         {/* Top Navbar */}
         <header className="bg-white shadow-sm">
-          <div className="flex items-center justify-between p-4">
+          <div className="flex items-center justify-between p-4 sm:pl-16 md:pl-4">
             <h2 className="text-xl font-semibold text-gray-800">
               {dashboardView === 'admin' ? 'Admin Panel' : 'Dashboard'}
             </h2>
@@ -115,7 +173,7 @@ const DashboardLayout = () => {
               >
                 Logout
               </button>
-              <Link to={"/settings"}>
+              <Link to="/settings">
                 <div className="h-8 w-8 rounded-full bg-gray-600 flex items-center justify-center text-white">
                   {user?.username?.charAt(0).toUpperCase() || 'U'}
                 </div>
@@ -125,7 +183,7 @@ const DashboardLayout = () => {
         </header>
 
         {/* Content Container */}
-        <main className="flex-1 overflow-auto p-6">
+        <main className="flex-1 overflow-auto p-4 sm:p-6">
           <Outlet />
         </main>
       </div>

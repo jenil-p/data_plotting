@@ -43,21 +43,28 @@ const ChartsDisplay = ({ charts, fullData, project, chartRefs, handleDeleteChart
       return (
         <div
           key={index}
-          className="mb-10 p-8 bg-white rounded-2xl shadow-xl border border-gray-100 relative hover:shadow-2xl transition-all duration-300 transform hover:-translate-y-1"
+          className="p-6 bg-white rounded-xl shadow-md border border-gray-100 relative hover:shadow-lg transition-all duration-300"
         >
-          <button
-            onClick={() => handleDeleteChart(chart._id)}
-            className="absolute cursor-pointer z-50 top-4 right-4 p-2 text-red-500 hover:bg-red-50 hover:text-red-700 rounded-full transition-all duration-200"
-          >
-            <FiTrash2 size={20} />
-          </button>
-          <button
-            onClick={() => handleDownloadChart(chart._id, chart.title || 'pie-chart', chart.type)}
-            className="absolute cursor-pointer z-50 top-4 right-14 p-2 text-blue-500 hover:bg-blue-50 hover:text-blue-700 rounded-full transition-all duration-200"
-          >
-            <FiDownload size={20} />
-          </button>
-          <div className="w-full h-[450px]">
+          <div className="flex justify-between items-center mb-4">
+            <h3 className="text-lg font-semibold text-gray-800">{chart.title || 'Pie Chart'}</h3>
+            <div className="flex space-x-2">
+              <button
+                onClick={() => handleDownloadChart(chart._id, chart.title || 'pie-chart', chart.type)}
+                className="p-2 text-blue-500 hover:bg-blue-50 hover:text-blue-700 rounded-full transition-all duration-200"
+                aria-label="Download chart"
+              >
+                <FiDownload size={20} />
+              </button>
+              <button
+                onClick={() => handleDeleteChart(chart._id)}
+                className="p-2 text-red-500 hover:bg-red-50 hover:text-red-700 rounded-full transition-all duration-200"
+                aria-label="Delete chart"
+              >
+                <FiTrash2 size={20} />
+              </button>
+            </div>
+          </div>
+          <div className="w-full h-[400px] sm:h-[450px]">
             <PieChart
               chart={chart}
               data={pieData}
@@ -126,63 +133,66 @@ const ChartsDisplay = ({ charts, fullData, project, chartRefs, handleDeleteChart
     return (
       <div
         key={index}
-        className="mb-10 p-8 bg-white rounded-2xl shadow-xl border border-gray-100 relative hover:shadow-2xl transition-all duration-300 transform hover:-translate-y-1"
+        className="p-6 bg-white rounded-xl shadow-md border border-gray-100 relative hover:shadow-lg transition-all duration-300"
       >
-        <button
-          onClick={() => handleDeleteChart(chart._id)}
-          className="absolute cursor-pointer z-50 top-4 right-4 p-2 text-red-500 hover:bg-red-50 hover:text-red-700 rounded-full transition-all duration-200"
-        >
-          <FiTrash2 size={20} />
-        </button>
-        {!(chart.type.includes('3d')) && (
-          <button
-            onClick={() => handleDownloadChart(chart._id, chart.title || `${chart.type}-chart`, chart.type)}
-            className="absolute cursor-pointer z-50 top-4 right-14 p-2 text-blue-500 hover:bg-blue-50 hover:text-blue-700 rounded-full transition-all duration-200"
-          >
-            <FiDownload size={20} />
-          </button>
-        )}
-        {chart.type === 'bar' && (
-          <div className="w-full h-[450px]">
+        <div className="flex justify-between items-center mb-4">
+          <h3 className="text-lg font-semibold text-gray-800">{chart.title || `${chart.type} Chart`}</h3>
+          <div className="flex space-x-2">
+            {!(chart.type.includes('3d')) && (
+              <button
+                onClick={() => handleDownloadChart(chart._id, chart.title || `${chart.type}-chart`, chart.type)}
+                className="p-2 text-blue-500 hover:bg-blue-50 hover:text-blue-700 rounded-full transition-all duration-200"
+                aria-label="Download chart"
+              >
+                <FiDownload size={20} />
+              </button>
+            )}
+            <button
+              onClick={() => handleDeleteChart(chart._id)}
+              className="p-2 text-red-500 hover:bg-red-50 hover:text-red-700 rounded-full transition-all duration-200"
+              aria-label="Delete chart"
+            >
+              <FiTrash2 size={20} />
+            </button>
+          </div>
+        </div>
+        <div className="w-full h-[400px] sm:h-[450px]">
+          {chart.type === 'bar' && (
             <Bar
               data={chartData}
               options={options}
               ref={(el) => (chartRefs.current[chart._id] = el)}
             />
-          </div>
-        )}
-        {chart.type === 'line' && (
-          <div className="w-full h-[450px]">
+          )}
+          {chart.type === 'line' && (
             <Line
               data={chartData}
               options={options}
               ref={(el) => (chartRefs.current[chart._id] = el)}
             />
-          </div>
-        )}
-        {chart.type === 'scatter' && (
-          <div className="w-full h-[450px]">
+          )}
+          {chart.type === 'scatter' && (
             <Scatter
               data={chartData}
               options={options}
               ref={(el) => (chartRefs.current[chart._id] = el)}
             />
-          </div>
-        )}
-        {(chart.type === 'bar3d' || chart.type === 'line3d' || chart.type === 'scatter3d') && (
-          <ThreeChart chart={chart} data={data} />
-        )}
+          )}
+          {(chart.type === 'bar3d' || chart.type === 'line3d' || chart.type === 'scatter3d') && (
+            <ThreeChart chart={chart} data={data} />
+          )}
+        </div>
       </div>
     );
   };
 
   return (
-    <div className="mb-10">
+    <div className="mb-8">
       <h2 className="text-2xl font-semibold text-gray-900 mb-6">Charts</h2>
       {charts.length === 0 ? (
         <p className="text-gray-500 text-center py-6 text-lg">No charts added yet.</p>
       ) : (
-        <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
+        <div className="grid grid-cols-1 md:grid-cols-1 lg:grid-cols-2 gap-6">
           {charts.map((chart, index) => renderChart(chart, index))}
         </div>
       )}

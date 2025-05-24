@@ -40,44 +40,57 @@ const ProjectDetailsMain = ({
   };
 
   return (
-    <>
-      <div className="flex justify-between items-center mb-8">
-        <h1 className="text-3xl font-bold text-gray-900 tracking-tight">{project.name}</h1>
-        <div className="flex space-x-4">
+    <div className="space-y-8">
+      {/* Project Title */}
+      <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
+        <h1 className="text-2xl sm:text-3xl font-bold text-gray-900 tracking-tight">{project.name}</h1>
+        <div className="flex flex-col sm:flex-row space-y-2 sm:space-y-0 sm:space-x-4 w-full sm:w-auto">
           <button
             onClick={handleDownloadPDF}
-            className="flex items-center cursor-pointer py-2 px-6 rounded-xl bg-green-100 text-green-700 transition-all duration-300 shadow-md hover:shadow-lg"
+            className="flex items-center justify-center py-2 px-4 rounded-xl bg-green-100 text-green-700 hover:bg-green-200 transition-all duration-300 shadow-sm hover:shadow-md w-full sm:w-auto"
           >
-            <FiDownload className="mr-2" /> Download Project PDF
+            <FiDownload className="mr-2" /> Download PDF
           </button>
           <button
             onClick={handleDeleteProject}
-            className="flex items-center cursor-pointer py-2 px-6 rounded-xl bg-red-100 text-red-700 transition-all duration-300 shadow-md hover:shadow-lg"
+            className="flex items-center justify-center py-2 px-4 rounded-xl bg-red-100 text-red-700 hover:bg-red-200 transition-all duration-300 shadow-sm hover:shadow-md w-full sm:w-auto"
           >
             <FiTrash2 className="mr-2" /> Delete Project
           </button>
         </div>
       </div>
 
-      <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-8">
-        <p className="text-gray-700 text-lg">
-          <span className="font-semibold">File:</span> {project.file.originalName}
-        </p>
-        <p className="text-gray-700 text-lg">
-          <span className="font-semibold">Columns:</span> {project.file.columns.join(', ')}
-        </p>
+      {/* Columns */}
+      <div>
+        <h2 className="text-lg font-semibold text-gray-800 mb-2">Columns</h2>
+        <div className="flex flex-wrap gap-2">
+          {project?.file?.columns?.map((col, index) => (
+            <span
+              key={index}
+              className="bg-indigo-100 text-indigo-600 px-3 py-1 rounded-full text-sm"
+            >
+              {col}
+            </span>
+          )) || <p className="text-gray-500">No columns available</p>}
+        </div>
+      </div>
+
+      {/* File Info */}
+      <div>
+        <h2 className="text-lg font-semibold text-gray-800 mb-2">File</h2>
+        <p className="text-gray-700">{project?.file?.originalName || 'No file'}</p>
       </div>
 
       {/* Data Preview */}
       {dataPreview.length > 0 && project?.file?.columns ? (
-        <div className="mb-10">
-          <h2 className="text-2xl font-semibold text-gray-900 mb-4">Data Preview (First 5 Rows)</h2>
-          <div className="overflow-x-auto bg-white rounded-2xl shadow-xl border border-gray-100">
+        <div>
+          <h2 className="text-lg font-semibold text-gray-800 mb-4">Data Preview (First 5 Rows)</h2>
+          <div className="overflow-x-auto bg-white rounded-xl shadow-md border border-gray-100">
             <table className="min-w-full">
               <thead>
-                <tr className="bg-gradient-to-r from-indigo-50 to-indigo-100 text-gray-800">
+                <tr className="bg-indigo-50 text-gray-800">
                   {project.file.columns.map((col, index) => (
-                    <th key={index} className="border-b border-gray-200 px-6 py-4 text-left text-sm font-semibold">
+                    <th key={index} className="border-b border-gray-200 px-4 sm:px-6 py-3 text-left text-sm font-semibold">
                       {col}
                     </th>
                   ))}
@@ -87,8 +100,8 @@ const ProjectDetailsMain = ({
                 {dataPreview.map((row, rowIndex) => (
                   <tr key={rowIndex} className="hover:bg-indigo-50 transition-colors duration-200">
                     {project.file.columns.map((col, colIndex) => (
-                      <td key={colIndex} className="border-b border-gray-200 px-6 py-4 text-gray-700">
-                        {row[col]}
+                      <td key={colIndex} className="border-b border-gray-200 px-4 sm:px-6 py-3 text-gray-700">
+                        {row[col] || 'N/A'}
                       </td>
                     ))}
                   </tr>
@@ -98,14 +111,14 @@ const ProjectDetailsMain = ({
           </div>
         </div>
       ) : (
-        <p className="text-gray-500 text-center py-6 text-lg">No data available to preview.</p>
+        <p className="text-gray-500 text-center py-6">No data available to preview.</p>
       )}
 
       {/* Add Chart Form */}
-      <div className="mb-10 p-8 bg-white rounded-2xl shadow-xl border border-gray-100">
-        <h2 className="text-2xl font-semibold text-gray-900 mb-6">Add New Chart</h2>
+      <div className="p-6 bg-white rounded-xl shadow-md border border-gray-100">
+        <h2 className="text-lg font-semibold text-gray-800 mb-6">Add New Chart</h2>
         <form onSubmit={validateForm} className="space-y-6">
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
             <div>
               <label className="block text-sm font-medium text-gray-700 mb-2">Chart Type</label>
               <select
@@ -211,13 +224,13 @@ const ProjectDetailsMain = ({
           </div>
           <button
             type="submit"
-            className="flex items-center bg-blue-700 text-white py-3 px-6 rounded-xl transition-all duration-300 shadow-md hover:shadow-lg"
+            className="flex items-center justify-center bg-blue-600 text-white py-3 px-6 rounded-xl hover:bg-blue-700 transition-all duration-300 shadow-sm hover:shadow-md w-full sm:w-auto"
           >
             <FiPlus className="mr-2" /> Add Chart
           </button>
         </form>
       </div>
-    </>
+    </div>
   );
 };
 

@@ -81,14 +81,12 @@ const AuthWrapper = ({ children }) => {
   useEffect(() => {
     const storedToken = localStorage.getItem('token');
     if (storedToken && !user) {
-      // console.log('Fetching user with token...');
       dispatch(fetchUser());
     }
   }, [dispatch, user]);
 
   useEffect(() => {
-    // console.log('Current location:', location.pathname);
-    const redirectablePublicPaths = ['/', '/login', '/signup']; // Only redirect from these public paths
+    const redirectablePublicPaths = ['/', '/login', '/signup']; // Exclude /about from redirect
     const isRedirectablePublicPath = redirectablePublicPaths.includes(location.pathname);
 
     if (status === 'loading') return;
@@ -97,21 +95,14 @@ const AuthWrapper = ({ children }) => {
       // Only redirect if the user is on a redirectable public path (i.e., not /about)
       if (isRedirectablePublicPath) {
         const redirectPath = dashboardView === 'admin' ? '/admindash' : '/dashboard';
-        // console.log(`Redirecting from public path to ${redirectPath}`);
         navigate(redirectPath, { replace: true });
       }
     } else if (!redirectablePublicPaths.includes(location.pathname) && location.pathname !== '/about') {
       // Redirect to login if the user is not authenticated and trying to access a non-public route
-      // console.log('Redirecting to /login from:', location.pathname);
       navigate('/login', { state: { from: location }, replace: true });
     }
   }, [status, token, user, dashboardView, navigate, location]);
 
-  useEffect(() => {
-    // console.log('Route changed to:', location.pathname);
-  }, [location]);
-
-  // console.log('AuthWrapper state:', { token, user, status, dashboardView });
 
   return children;
 };

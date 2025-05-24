@@ -1,4 +1,3 @@
-// backend/routes/openai.js
 const express = require('express');
 const Together = require('together-ai');
 const { Project } = require('../models');
@@ -7,8 +6,7 @@ const authController = require('../controllers/authController');
 
 const router = express.Router();
 
-// Initialize Together AI client
-const together = new Together(); // Automatically uses process.env.TOGETHER_API_KEY
+const together = new Together();
 
 // Protect the route
 router.use(authController.protect);

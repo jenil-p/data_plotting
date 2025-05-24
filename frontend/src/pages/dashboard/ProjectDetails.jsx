@@ -5,11 +5,11 @@ import { getProject, getFileData, addChart, deleteProject, deleteChart } from '.
 import { Chart as ChartJS, CategoryScale, LinearScale, BarElement, LineElement, PointElement, ArcElement, Tooltip, Legend } from 'chart.js';
 import ProjectDetailsMain from './ProjectDetailsMain';
 import ChartsDisplay from './Chartdisplay';
-import ChatBoard from '../../components/Chatboard';
+import ChatBoard from '../../components/ChatBoard';
 import { computeDataSummary, generatePDFContent } from './PdfGenerator';
 import '../../App.css';
+import { FiBarChart2, FiMessageSquare } from 'react-icons/fi';
 
-// Register Chart.js components
 ChartJS.register(
   CategoryScale,
   LinearScale,
@@ -29,6 +29,7 @@ const ProjectDetails = () => {
   const [fullData, setFullData] = useState([]);
   const [charts, setCharts] = useState([]);
   const [loading, setLoading] = useState(true);
+  const [showChatModal, setShowChatModal] = useState(false);
   const [chartForm, setChartForm] = useState({
     type: 'bar',
     title: '',
@@ -119,19 +120,6 @@ const ProjectDetails = () => {
     }
   };
 
-  const handleDeleteProject = async () => {
-    if (window.confirm('Are you sure you want to delete this project?')) {
-      try {
-        await deleteProject(id);
-        toast.success('Project deleted successfully');
-        navigate('/dashboard');
-      } catch (error) {
-        console.error('Failed to delete project:', error.message);
-        toast.error('Failed to delete project');
-      }
-    }
-  };
-
   const handleDownloadChart = (chartId, chartTitle, chartType) => {
     const chartInstance = chartRefs.current[chartId];
     if (chartInstance && chartInstance.canvas) {
@@ -165,43 +153,96 @@ const ProjectDetails = () => {
     }
   };
 
-  const handleDownloadPDF = () => {
-    try {
-      const dataSummary = computeDataSummary(fullData, project?.file?.columns);
-      const doc = generatePDFContent(project, dataPreview, charts, dataSummary, chartRefs);
-      doc.save(`${project?.name || 'project'}_summary.pdf`);
-      toast.success('PDF downloaded successfully!');
-    } catch (error) {
-      console.error('Failed to generate PDF:', error);
-      toast.error('Failed to download PDF');
-    }
-  };
+  if (loading) return (
+    <div className="flex justify-center items-center min-h-screen">
+      <div className="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-indigo-500"></div>
+    </div>
+  );
 
-  if (loading) return <div className="text-center text-gray-500 py-10 text-lg">Loading project...</div>;
-  if (!project) return <div className="text-center text-gray-500 py-10 text-lg">Project not found</div>;
+  if (!project) return (
+    <div className="text-center py-20">
+      <h2 className="text-2xl font-semibold text-gray-700">Project not found</h2>
+      <p className="text-gray-500 mt-2">The requested project could not be loaded</p>
+      <button
+        onClick={() => navigate('/dashboard')}
+        className="mt-4 px-4 py-2 bg-indigo-600 text-white rounded-lg hover:bg-indigo-700"
+      >
+        Back to Dashboard
+      </button>
+    </div>
+  );
 
   return (
-    <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-10 bg-gradient-to-br from-gray-50 to-gray-100 min-h-screen">
-      <ProjectDetailsMain
-        project={project}
-        dataPreview={dataPreview}
-        chartForm={chartForm}
-        setChartForm={setChartForm}
-        handleAddChart={handleAddChart}
-        handleDeleteProject={handleDeleteProject}
-        handleDownloadPDF={handleDownloadPDF}
-      />
-      <div className="mb-10">
-        <ChatBoard projectId={id} columns={project?.file?.columns || []} data={fullData} />
+    <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 bg-gradient-to-br from-gray-50 to-gray-100 min-h-screen">
+      {/* Floating AI Assistant Button */}
+      <button
+        onClick={() => setShowChatModal(true)}
+        className="fixed bottom-8 right-8 z-20 flex items-center justify-center w-14 h-14 rounded-full bg-indigo-600 text-white shadow-xl hover:bg-indigo-700 transition-all duration-300 hover:shadow-2xl"
+        aria-label="Open AI Assistant"
+      >
+        <FiMessageSquare className="h-6 w-6" />
+      </button>
+
+      {/* Main Content */}
+      <div className="relative">
+        <ProjectDetailsMain
+          project={project}
+          dataPreview={dataPreview}
+          chartForm={chartForm}
+          setChartForm={setChartForm}
+          handleAddChart={handleAddChart}
+        />
+
+        <div className="mt-8">
+          <div className="flex justify-between items-center mb-4">
+            <h2 className="text-xl font-semibold text-gray-900">
+              <FiBarChart2 className="inline mr-2" /> Data Visualizations
+            </h2>
+          </div>
+          <ChartsDisplay
+            charts={charts}
+            fullData={fullData}
+            project={project}
+            chartRefs={chartRefs}
+            handleDeleteChart={handleDeleteChart}
+            handleDownloadChart={handleDownloadChart}
+          />
+        </div>
       </div>
-      <ChartsDisplay
-        charts={charts}
-        fullData={fullData}
-        project={project}
-        chartRefs={chartRefs}
-        handleDeleteChart={handleDeleteChart}
-        handleDownloadChart={handleDownloadChart}
-      />
+
+      {/* AI Chat Modal */}
+      {showChatModal && (
+        <div className="fixed inset-0 z-30 flex items-center justify-center p-4">
+          {/* Overlay */}
+          <div
+            className="absolute inset-0 bg-black bg-opacity-50 backdrop-blur-sm"
+            onClick={() => setShowChatModal(false)}
+          ></div>
+
+          {/* Modal Content */}
+          <div className="relative bg-white rounded-xl shadow-2xl max-md:w-screen w-[70vw] h-[75vh] max-w-4xl max-h-[90vh] flex flex-col transform transition-all duration-300 animate-modal-open">
+            <div className="flex justify-between items-center p-4 border-b border-gray-200">
+              <h2 className="text-xl font-semibold text-gray-900">AI Data Assistant</h2>
+              <button
+                onClick={() => setShowChatModal(false)}
+                className="p-2 text-gray-500 hover:text-gray-700 rounded-full hover:bg-gray-100"
+              >
+                <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M6 18L18 6M6 6l12 12" />
+                </svg>
+              </button>
+            </div>
+
+            <div className="flex-1 overflow-hidden">
+              <ChatBoard
+                projectId={id}
+                columns={project?.file?.columns || []}
+                data={fullData}
+              />
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   );
 };
