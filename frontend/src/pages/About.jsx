@@ -65,7 +65,7 @@ const About = () => {
       </section>
 
       {/* Team Section */}
-      {aboutData.team.length > 0 && (
+      {/* {aboutData.team.length > 0 && (
         <section className="py-16 bg-gray-800">
           <div className="container mx-auto px-4 sm:px-6 lg:px-8">
             <h2 className="text-2xl sm:text-3xl md:text-4xl font-bold text-white text-center mb-12 animate-fade-in">
@@ -88,7 +88,7 @@ const About = () => {
             </div>
           </div>
         </section>
-      )}
+      )} */}
 
       {/* Contact Section */}
       <section className="py-16">
