@@ -85,9 +85,8 @@ const DashboardLayout = () => {
               <li key={index} className="mb-2">
                 <Link
                   to={item.path}
-                  className={`flex items-center p-3 hover:bg-gray-700 rounded-lg mx-2 ${
-                    location.pathname === item.path ? 'bg-gray-700' : ''
-                  }`}
+                  className={`flex items-center p-3 hover:bg-gray-700 rounded-lg mx-2 ${location.pathname === item.path ? 'bg-gray-700' : ''
+                    }`}
                 >
                   <span className="text-xl">{item.icon}</span>
                   {sidebarOpen && <span className="ml-3">{item.name}</span>}
@@ -125,9 +124,8 @@ const DashboardLayout = () => {
                     <li key={index} className="mb-2">
                       <Link
                         to={item.path}
-                        className={`flex items-center p-3 hover:bg-gray-700 rounded-lg mx-2 ${
-                          location.pathname === item.path ? 'bg-gray-700' : ''
-                        }`}
+                        className={`flex items-center p-3 hover:bg-gray-700 rounded-lg mx-2 ${location.pathname === item.path ? 'bg-gray-700' : ''
+                          }`}
                         onClick={() => setMobileSidebarOpen(false)}
                       >
                         <span className="text-xl">{item.icon}</span>
@@ -152,19 +150,39 @@ const DashboardLayout = () => {
             </h2>
             <div className="flex items-center space-x-4">
               {user?.role === 'admin' && (
-                <div className="flex items-center space-x-2">
-                  <button
-                    onClick={() => handleSwitchView('user')}
-                    className={`px-3 py-1 rounded-lg ${dashboardView === 'user' ? 'bg-blue-600 text-white' : 'bg-gray-200 text-gray-800'}`}
-                  >
-                    User Dashboard
-                  </button>
-                  <button
-                    onClick={() => handleSwitchView('admin')}
-                    className={`px-3 py-1 rounded-lg ${dashboardView === 'admin' ? 'bg-blue-600 text-white' : 'bg-gray-200 text-gray-800'}`}
-                  >
-                    Admin Panel
-                  </button>
+                <div className="flex items-center">
+                  <div className="relative inline-flex items-center h-9 bg-gray-100 rounded-full w-40 shadow-sm">
+                    <input
+                      type="checkbox"
+                      id="dashboardToggle"
+                      checked={dashboardView === 'admin'}
+                      onChange={() => handleSwitchView(dashboardView === 'user' ? 'admin' : 'user')}
+                      className="hidden"
+                    />
+                    <label
+                      htmlFor="dashboardToggle"
+                      className="flex items-center w-full cursor-pointer relative"
+                    >
+                      <span
+                        className={`flex-1 text-center py-2 text-xs font-semibold transition-colors duration-1000 z-10 ${dashboardView === 'user' ? 'text-green-700' : 'text-gray-700'
+                          }`}
+                      >
+                        User
+                      </span>
+                      <span
+                        className={`flex-1 text-center py-2 text-xs font-semibold transition-colors duration-initial z-10 ${dashboardView === 'admin' ? 'text-green-700' : 'text-gray-700'
+                          }`}
+                      >
+                        Admin
+                      </span>
+                      <span
+                        className={`absolute left-1 top-1 h-7 w-[calc(50%-0.25rem)] rounded-full shadow-md transform transition-transform duration-1000 ease-in-out ${dashboardView === 'admin'
+                          ? 'translate-x-[calc(60%-0.5rem)] bg-gradient-to-r from-blue-500 to-indigo-600'
+                          : 'translate-x-0 bg-gradient-to-r from-teal-400 to-cyan-500'
+                          }`}
+                      ></span>
+                    </label>
+                  </div>
                 </div>
               )}
               <button
