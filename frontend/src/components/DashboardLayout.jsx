@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { FiFilePlus, FiClock, FiBarChart2, FiSettings, FiShield, FiUsers, FiEdit, FiUser, FiMenu, FiX } from 'react-icons/fi';
+import { FiFilePlus, FiPower, FiClock, FiBarChart2, FiSettings, FiShield, FiUsers, FiEdit, FiUser, FiMenu, FiX } from 'react-icons/fi';
 import { Link, Outlet, useNavigate, useLocation } from 'react-router-dom';
 import { useDispatch, useSelector } from 'react-redux';
 import { logoutUser, setDashboardView } from '../features/auth/authSlice';
@@ -144,7 +144,7 @@ const DashboardLayout = () => {
       <div className="flex-1 flex flex-col overflow-hidden">
         {/* Top Navbar */}
         <header className="bg-white shadow-sm">
-          <div className="flex items-center justify-between p-4 sm:pl-16 md:pl-4">
+          <div className="flex items-center justify-between max-sm:justify-center p-4 sm:pl-16 md:pl-4">
             <h2 className="text-xl max-sm:hidden font-semibold text-gray-800">
               {dashboardView === 'admin' ? 'Admin Panel' : 'Dashboard'}
             </h2>
@@ -185,12 +185,16 @@ const DashboardLayout = () => {
                   </div>
                 </div>
               )}
+
               <button
                 onClick={handleLogout}
-                className="bg-red-200 text-red-600 py-1 px-3 rounded hover:bg-red-300"
+                className="bg-red-200 max-sm:hidden text-red-600 py-1 px-3 rounded hover:bg-red-300"
               >
                 Logout
               </button>
+              <div className='text-red-600 sm:hidden' onClick={handleLogout}>
+                <FiPower className="h-4 w-4" />
+              </div>
               <Link to="/settings">
                 <div className="h-8 w-8 max-sm:hidden rounded-full bg-gray-600 flex items-center justify-center text-white">
                   {user?.username?.charAt(0).toUpperCase() || 'U'}

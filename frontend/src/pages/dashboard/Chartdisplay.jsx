@@ -64,7 +64,7 @@ const ChartsDisplay = ({ charts, fullData, project, chartRefs, handleDeleteChart
               </button>
             </div>
           </div>
-          <div className="w-full h-[400px] sm:h-[450px]">
+          <div className="w-full h-[500px]">
             <PieChart
               chart={chart}
               data={pieData}
@@ -156,7 +156,7 @@ const ChartsDisplay = ({ charts, fullData, project, chartRefs, handleDeleteChart
             </button>
           </div>
         </div>
-        <div className="w-full h-[400px] sm:h-[450px]">
+        <div className="w-full h-[500px]">
           {chart.type === 'bar' && (
             <Bar
               data={chartData}
@@ -179,7 +179,7 @@ const ChartsDisplay = ({ charts, fullData, project, chartRefs, handleDeleteChart
             />
           )}
           {(chart.type === 'bar3d' || chart.type === 'line3d' || chart.type === 'scatter3d') && (
-            <ThreeChart chart={chart} data={data} />
+            <ThreeChart chart={chart} data={data} ref={(el) => (chartRefs.current[chart._id] = el)} />
           )}
         </div>
       </div>

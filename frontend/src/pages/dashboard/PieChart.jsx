@@ -7,7 +7,7 @@ ChartJS.register(ArcElement, Tooltip, Legend);
 // Use forwardRef to pass the ref to the Pie component
 const PieChart = forwardRef(({ chart, data }, ref) => {
   if (!data || data.length === 0) {
-    return <p className="text-gray-500 text-center py-4">No data available to render chart.</p>;
+    return <p className="text-gray-600 text-center py-4">No data available to render chart.</p>;
   }
 
   // Process data directly since data is already the array of values
@@ -40,15 +40,17 @@ const PieChart = forwardRef(({ chart, data }, ref) => {
     responsive: true,
     plugins: {
       legend: {
-        position: 'right',
+        position: 'top',
         labels: {
           font: { size: 14, family: 'Inter' },
           color: '#1F2937',
+          padding: 20,
+          boxWidth: 20,
         },
       },
       title: {
-        display: !!chart.title,
-        text: chart.title,
+        display: true,
+        text: chart.title || `Pie Chart: ${chart.dataColumn || 'Data'}`,
         font: { size: 18, weight: 'bold', family: 'Inter' },
         color: '#1F2937',
         padding: { top: 10, bottom: 20 },
@@ -58,7 +60,6 @@ const PieChart = forwardRef(({ chart, data }, ref) => {
         titleFont: { size: 14, family: 'Inter' },
         bodyFont: { size: 12, family: 'Inter' },
         cornerRadius: 8,
-        // Simplify the tooltip callback to avoid recursion
         callbacks: {
           label: (context) => {
             const label = context.label || '';
@@ -74,12 +75,15 @@ const PieChart = forwardRef(({ chart, data }, ref) => {
   };
 
   return (
-    <div className="w-full h-[450px] bg-white">
+    <div className="w-full h-[500px] bg-white flex flex-col items-center">
       <Pie
         ref={ref}
         data={chartData}
         options={options}
       />
+      <p className="mt-2 text-sm text-gray-600">
+        Data: {chart.dataColumn || 'Unknown'}
+      </p>
     </div>
   );
 });
