@@ -145,7 +145,7 @@ const DashboardLayout = () => {
         {/* Top Navbar */}
         <header className="bg-white shadow-sm">
           <div className="flex items-center justify-between p-4 sm:pl-16 md:pl-4">
-            <h2 className="text-xl font-semibold text-gray-800">
+            <h2 className="text-xl max-sm:hidden font-semibold text-gray-800">
               {dashboardView === 'admin' ? 'Admin Panel' : 'Dashboard'}
             </h2>
             <div className="flex items-center space-x-4">
@@ -170,7 +170,7 @@ const DashboardLayout = () => {
                         User
                       </span>
                       <span
-                        className={`flex-1 text-center py-2 text-xs font-semibold transition-colors duration-initial z-10 ${dashboardView === 'admin' ? 'text-green-700' : 'text-gray-700'
+                        className={`flex-1 text-center py-2 text-xs font-semibold transition-colors duration-1000 z-10 ${dashboardView === 'admin' ? 'text-green-700' : 'text-gray-700'
                           }`}
                       >
                         Admin
@@ -192,7 +192,7 @@ const DashboardLayout = () => {
                 Logout
               </button>
               <Link to="/settings">
-                <div className="h-8 w-8 rounded-full bg-gray-600 flex items-center justify-center text-white">
+                <div className="h-8 w-8 max-sm:hidden rounded-full bg-gray-600 flex items-center justify-center text-white">
                   {user?.username?.charAt(0).toUpperCase() || 'U'}
                 </div>
               </Link>
