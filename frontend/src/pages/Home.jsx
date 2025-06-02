@@ -7,8 +7,8 @@ const Home = () => {
   return (
     <div className="min-h-screen bg-gray-800">
       {/* Hero Section */}
-      <section className="relative bg-gradient-to-r from-gray-600 to-indigo-700 text-white py-16 sm:py-24 overflow-hidden">
-        <div className="absolute inset-0 bg-gradient-to-r from-gray-600 to-indigo-700 animate-gradient" />
+      <section className="relative bg-gray-800 text-white py-16 sm:py-24 overflow-hidden">
+        <div className="absolute inset-0 bg-gray-800 animate-gradient" />
         <div className="container mx-auto px-4 sm:px-6 lg:px-8 text-center relative z-10">
           <h1 className="text-3xl sm:text-4xl md:text-5xl lg:text-6xl font-bold mb-4 animate-slide-up">
             Transform Your Data with PlotPilot
@@ -19,7 +19,7 @@ const Home = () => {
           <div className="flex flex-col sm:flex-row justify-center gap-4 animate-slide-up animation-delay-400">
             <Link
               to="/login"
-              className="bg-white  text-gray-800 hover:text-white px-6 py-3 rounded-lg font-semibold hover:bg-gray-800 hover:shadow-lg hover:shadow-gray-900 transition-all duration-300 flex items-center justify-center"
+              className="bg-white  text-gray-800 hover:text-white px-6 py-3 rounded-lg font-semibold hover:backdrop-blur-3xl hover:bg-gray-800 hover:shadow-lg hover:shadow-gray-900 transition-all duration-300 flex items-center justify-center"
             >
               Get Started <FiArrowRight className="ml-2" />
             </Link>
@@ -97,7 +97,7 @@ const Home = () => {
       </section>
 
       {/* Testimonials Section */}
-      <section className="py-16 bg-gradient-to-r from-gray-50 to-indigo-50">
+      <section className="py-16 bg-gray-800">
         <div className="container mx-auto px-4 sm:px-6 lg:px-8">
           <h2 className="text-2xl sm:text-3xl md:text-4xl font-bold text-white text-center mb-12 animate-fade-in">
             Trusted by Data Enthusiasts
@@ -160,7 +160,7 @@ const Home = () => {
           </p>
           <Link
             to="/login"
-            className="bg-gray-600 text-white px-8 py-3 rounded-lg font-semibold hover:bg-gray-700 hover:shadow-lg transition-all duration-300 inline-flex items-center animate-slide-up animation-delay-400"
+            className="bg-white text-gray-800 px-8 py-3 rounded-lg font-semibold hover:bg-gray-800 hover:text-white hover:shadow-lg shadow-gray-900 transition-all duration-300 inline-flex items-center animate-slide-up animation-delay-400"
           >
             Start Now <FiArrowRight className="ml-2" />
           </Link>

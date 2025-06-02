@@ -42,8 +42,8 @@ const About = () => {
   const content = (
     <div className="min-h-screen bg-gray-800">
       {/* Header Section */}
-      <section className="relative bg-gradient-to-r from-gray-600 to-indigo-700 text-white py-16 sm:py-24 overflow-hidden">
-        <div className="absolute inset-0 bg-gradient-to-r from-gray-600 to-indigo-700 animate-gradient" />
+      <section className="relative bg-gray-700 text-white py-16 sm:py-24 overflow-hidden">
+        <div className="absolute inset-0 bg-gray-800 animate-gradient" />
         <div className="container mx-auto px-4 sm:px-6 lg:px-8 text-center relative z-10">
           <h1 className="text-3xl sm:text-4xl md:text-5xl lg:text-6xl font-bold mb-4 animate-slide-up">
             About PlotPilot
