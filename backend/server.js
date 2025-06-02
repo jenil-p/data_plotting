@@ -67,11 +67,19 @@ mongoose
   .then(() => console.log('MongoDB Connected...'))
   .catch((err) => console.error('MongoDB connection error:', err));
 
+const allowedOrigins = process.env.FRONTEND_ORIGIN.split(',');
 app.use(cors({
-  origin: process.env.FRONTEND_ORIGIN?.split(','),
+  origin: function (origin, callback) {
+    if (!origin || allowedOrigins.includes(origin)) {
+      return callback(null, true);
+    }
+    callback(new Error('Not allowed by CORS'));
+  },
   credentials: true,
   allowedHeaders: ['Content-Type', 'Authorization'],
 }));
+
+
 app.use(helmet());
 app.use(sanitizeMongo);
 app.use(sanitizeXSS);
