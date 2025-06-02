@@ -2,7 +2,7 @@ import API from './axios';
 
 export const signup = async (userData) => {
   const response = await API.post('/auth/signup', userData);
-  return response;
+  return response.data;
 };
 
 export const login = async (credentials) => {
@@ -18,7 +18,7 @@ export const login = async (credentials) => {
 
 export const logout = async () => {
   const response = await API.post('/auth/logout');
-  return response;
+  return response.data;
 };
 
 export const getMe = async () => {
@@ -44,5 +44,5 @@ export const getMe = async () => {
 
 export const updateUsername = async (username) => {
   const response = await API.patch('/users/update-username', { username });
-  return response;
+  return response.data;
 };

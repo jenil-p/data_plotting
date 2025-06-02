@@ -7,7 +7,7 @@ export const signupUser = createAsyncThunk(
   async (userData, { rejectWithValue }) => {
     try {
       const response = await signup(userData);
-      return response.data;
+      return response;
     } catch (error) {
       return rejectWithValue(error.response?.data?.message || error.message);
     }
@@ -34,12 +34,11 @@ export const logoutUser = createAsyncThunk(
   async (_, { rejectWithValue }) => {
     try {
       const response = await logout();
-      localStorage.removeItem('token'); // Clear token on successful logout
+      localStorage.removeItem('token');
       return response;
     } catch (error) {
-      // Even if the API call fails, consider logout successful if token is cleared
       localStorage.removeItem('token');
-      return { status: 'success' }; // Treat as success since frontend state is cleared
+      return { status: 'success' };
     }
   }
 );
@@ -69,7 +68,7 @@ const authSlice = createSlice({
     token: localStorage.getItem('token') || null,
     status: localStorage.getItem('token') ? 'loading' : 'idle',
     error: null,
-    dashboardView: 'user', // Default view for users; admins can toggle
+    dashboardView: 'user',
   },
   reducers: {
     setCredentials: (state, action) => {
@@ -82,7 +81,6 @@ const authSlice = createSlice({
   },
   extraReducers: (builder) => {
     builder
-      // Signup
       .addCase(signupUser.pending, (state) => {
         state.status = 'loading';
       })
@@ -90,6 +88,7 @@ const authSlice = createSlice({
         state.status = 'succeeded';
         state.user = action.payload.user;
         state.token = action.payload.token;
+        state.error = null;
         localStorage.setItem('token', action.payload.token);
         toast.success('Account created successfully!');
       })
@@ -98,7 +97,6 @@ const authSlice = createSlice({
         state.error = action.payload;
         toast.error(action.payload);
       })
-      // Login
       .addCase(loginUser.pending, (state) => {
         state.status = 'loading';
       })
@@ -111,9 +109,9 @@ const authSlice = createSlice({
         state.status = 'succeeded';
         state.user = action.payload.user;
         state.token = action.payload.token;
+        state.error = null;
         localStorage.setItem('token', action.payload.token);
       })
-      // Logout
       .addCase(logoutUser.pending, (state) => {
         state.status = 'loading';
       })
@@ -121,20 +119,20 @@ const authSlice = createSlice({
         state.status = 'succeeded';
         state.user = null;
         state.token = null;
-        state.dashboardView = 'user'; // Reset to user view on logout
+        state.dashboardView = 'user';
+        state.error = null;
         localStorage.removeItem('token');
         toast.success('Logged out successfully!');
       })
       .addCase(logoutUser.rejected, (state) => {
-        // Treat as success since token is already cleared
         state.status = 'succeeded';
         state.user = null;
         state.token = null;
-        state.dashboardView = 'user'; // Reset to user view
+        state.dashboardView = 'user';
+        state.error = null;
         localStorage.removeItem('token');
         toast.success('Logged out successfully!');
       })
-      // Fetch User
       .addCase(fetchUser.pending, (state) => {
         state.status = 'loading';
       })
@@ -149,7 +147,7 @@ const authSlice = createSlice({
         state.error = action.payload;
         state.user = null;
         state.token = null;
-        state.dashboardView = 'user'; // Reset to user view on failure
+        state.dashboardView = 'user';
         localStorage.removeItem('token');
       });
   },

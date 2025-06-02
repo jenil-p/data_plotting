@@ -120,6 +120,31 @@ const ProjectDetails = () => {
     }
   };
 
+  const handleDeleteProject = async () => {
+    if (confirm('Are you sure you want to delete this project?')) {
+      try {
+        await deleteProject(id);
+        toast.success('Project deleted successfully');
+        navigate('/dashboard');
+      } catch (error) {
+        console.error('Failed to delete project:', error.message);
+        toast.error('Failed to delete project');
+      }
+    }
+  };
+
+  const handleDownloadPDF = () => {
+    try {
+      const dataSummary = computeDataSummary(fullData, project?.file?.columns || []);
+      const doc = generatePDFContent(project, dataPreview, charts, dataSummary, chartRefs);
+      doc.save(`${project.name || 'project'}_summary.pdf`);
+      toast.success('PDF downloaded successfully');
+    } catch (error) {
+      console.error('Failed to generate PDF:', error.message);
+      toast.error('Failed to generate PDF');
+    }
+  };
+
   const handleDownloadChart = (chartId, chartTitle, chartType) => {
     const chartInstance = chartRefs.current[chartId];
     if (chartInstance && chartInstance.canvas) {
@@ -191,6 +216,8 @@ const ProjectDetails = () => {
           chartForm={chartForm}
           setChartForm={setChartForm}
           handleAddChart={handleAddChart}
+          handleDeleteProject={handleDeleteProject}
+          handleDownloadPDF={handleDownloadPDF}
         />
 
         <div className="mt-8">

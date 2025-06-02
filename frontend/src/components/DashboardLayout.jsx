@@ -4,7 +4,7 @@ import { Link, Outlet, useNavigate, useLocation } from 'react-router-dom';
 import { useDispatch, useSelector } from 'react-redux';
 import { logoutUser, setDashboardView } from '../features/auth/authSlice';
 import { selectDashboardView } from '../features/auth/authSlice';
-import '../App.css'
+import '../App.css';
 
 const DashboardLayout = () => {
   const [sidebarOpen, setSidebarOpen] = useState(true);
@@ -16,13 +16,9 @@ const DashboardLayout = () => {
   const dashboardView = useSelector(selectDashboardView);
 
   const handleLogout = async () => {
-    if (confirm("Are you sure you want to logout?")) {
-      try {
-        await dispatch(logoutUser()).unwrap();
-        navigate('/login');
-      } catch (error) {
-        console.error('Logout failed:', error);
-      }
+    if (confirm('Are you sure you want to logout?')) {
+      await dispatch(logoutUser()).unwrap();
+      navigate('/login');
     }
   };
 
@@ -104,9 +100,7 @@ const DashboardLayout = () => {
             className="fixed inset-0 backdrop-blur-xs bg-opacity-50 z-40 md:hidden"
             onClick={() => setMobileSidebarOpen(false)}
           ></div>
-          <div
-            className="fixed inset-0 flex items-center justify-center z-40 md:hidden"
-          >
+          <div className="fixed inset-0 flex items-center justify-center z-40 md:hidden">
             <div className="w-64 bg-gray-800 text-white rounded-lg shadow-xl animate-modal-open">
               <div className="flex items-center justify-between p-4 border-b border-gray-700">
                 <h1 className="text-xl font-bold">PlotPilot</h1>
@@ -144,16 +138,15 @@ const DashboardLayout = () => {
       <div className="flex-1 flex flex-col overflow-hidden">
         {/* Top Navbar */}
         <header className="bg-white shadow-sm">
-          <div className={`flex items-center justify-between ${user?.role === 'admin' ? 'max-sm:justify-center' : 'max-sm:justify-between' } p-4 sm:pl-16 md:pl-4`}>
+          <div
+            className={`flex items-center justify-between ${user?.role === 'admin' ? 'max-sm:justify-center' : 'max-sm:justify-between'
+              } p-4 sm:pl-16 md:pl-4`}
+          >
             {user?.role === 'admin' && (
-              <h2 className="text-xl max-sm:hidden font-semibold text-gray-800">
-                Admin Panel
-              </h2>
+              <h2 className="text-xl max-sm:hidden font-semibold text-gray-800">Admin Panel</h2>
             )}
             {user?.role === 'user' && (
-              <h2 className="text-xl font-semibold text-gray-800">
-                Dashboard
-              </h2>
+              <h2 className="text-xl font-semibold text-gray-800">Dashboard</h2>
             )}
             <div className="flex items-center space-x-4">
               {user?.role === 'admin' && (
@@ -183,9 +176,7 @@ const DashboardLayout = () => {
                         Admin
                       </span>
                       <span
-                        className={`absolute left-1 h-7 w-[calc(50%-0.25rem)] rounded-full shadow-md transform transition-transform duration-1000 ease-in-out bg-gradient-to-br from-gray-600 via-gray-700 to-gray-900 ${dashboardView === 'admin'
-                          ? 'translate-x-[calc(110%-0.5rem)]'
-                          : 'translate-x-0 '
+                        className={`absolute left-1 h-7 w-[calc(50%-0.25rem)] rounded-full shadow-md transform transition-transform duration-1000 ease-in-out bg-gradient-to-br from-gray-600 via-gray-700 to-gray-900 ${dashboardView === 'admin' ? 'translate-x-[calc(110%-0.5rem)]' : 'translate-x-0'
                           }`}
                       ></span>
                     </label>
@@ -199,7 +190,7 @@ const DashboardLayout = () => {
               >
                 Logout
               </button>
-              <div className='text-red-600 sm:hidden' onClick={handleLogout}>
+              <div className="text-red-600 sm:hidden" onClick={handleLogout}>
                 <FiPower className="h-4 w-4" />
               </div>
               <Link to="/settings">
