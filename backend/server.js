@@ -68,7 +68,7 @@ mongoose
   .catch((err) => console.error('MongoDB connection error:', err));
 
 app.use(cors({
-  origin: 'http://localhost:5173',
+  origin: process.env.FRONTEND_ORIGIN?.split(','),
   credentials: true,
   allowedHeaders: ['Content-Type', 'Authorization'],
 }));
