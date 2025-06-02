@@ -171,19 +171,19 @@ const DashboardLayout = () => {
                       className="flex items-center w-full cursor-pointer relative"
                     >
                       <span
-                        className={`flex-1 text-center py-2 text-xs font-semibold transition-colors duration-1000 z-10 ${dashboardView === 'user' ? 'text-green-700' : 'text-gray-700'
+                        className={`flex-1 text-center py-2 text-xs font-semibold transition-colors duration-1000 z-10 ${dashboardView === 'user' ? 'text-green-400' : 'text-gray-700'
                           }`}
                       >
                         User
                       </span>
                       <span
-                        className={`flex-1 text-center py-2 text-xs font-semibold transition-colors duration-1000 z-10 ${dashboardView === 'admin' ? 'text-green-700' : 'text-gray-700'
+                        className={`flex-1 text-center py-2 text-xs font-semibold transition-colors duration-1000 z-10 ${dashboardView === 'admin' ? 'text-green-400' : 'text-gray-700'
                           }`}
                       >
                         Admin
                       </span>
                       <span
-                        className={`absolute left-1 h-7 w-[calc(50%-0.25rem)] rounded-full shadow-md transform transition-transform duration-1000 ease-in-out bg-gradient-to-r from-gray-600 to-gray-900 ${dashboardView === 'admin'
+                        className={`absolute left-1 h-7 w-[calc(50%-0.25rem)] rounded-full shadow-md transform transition-transform duration-1000 ease-in-out bg-gradient-to-br from-gray-600 via-gray-700 to-gray-900 ${dashboardView === 'admin'
                           ? 'translate-x-[calc(110%-0.5rem)]'
                           : 'translate-x-0 '
                           }`}
