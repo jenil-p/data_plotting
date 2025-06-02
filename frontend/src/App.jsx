@@ -24,6 +24,7 @@ import { useLocation } from 'react-router-dom';
 import PublicRoute from './components/PublicRoute';
 import ErrorBoundary from './components/ErrorBoundary';
 import Home from './pages/Home';
+import './index.css';
 
 function App() {
   return (

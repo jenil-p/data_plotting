@@ -44,7 +44,7 @@ const ChatBoard = ({ projectId, columns, data }) => {
   return (
     <div className="flex flex-col h-full">
       {/* Header: Columns */}
-      <div className="bg-gradient-to-r from-indigo-600 to-blue-600 border-b border-gray-200">
+      <div className="columns">
         {isColumnsOpen ? (
           <div className="p-4 relative animate-roll-down">
             <button
@@ -69,7 +69,7 @@ const ChatBoard = ({ projectId, columns, data }) => {
           </div>
         ) : (
           <div
-            className="p-4 ml-1 mr-1 cursor-pointer rounded-2xl bg-indigo-50 hover:bg-indigo-100 transition-colors"
+            className="p-4 ml-1 mr-1 cursor-pointer bg-indigo-50 hover:bg-indigo-100 transition-colors"
             onClick={() => setIsColumnsOpen(true)}
           >
             <p className="text-indigo-800 text-sm font-medium">Available columns ...</p>

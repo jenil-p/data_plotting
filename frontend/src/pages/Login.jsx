@@ -6,6 +6,25 @@ import { toast } from 'react-hot-toast';
 import { Link } from 'react-router-dom';
 import '../App.css';
 
+// Map backend error messages to user-friendly messages
+const getFriendlyErrorMessage = (error) => {
+  if (!error) return 'An unexpected error occurred. Please try again.';
+  const errorMessage = typeof error === 'string' ? error : error.message || 'Unknown error';
+  
+  switch (errorMessage) {
+    case 'Please provide email and password':
+      return 'Please enter both email and password.';
+    case 'Incorrect email or password':
+      return 'The email or password you entered is incorrect.';
+    case 'Invalid or expired token. Please log in again.':
+      return 'Your session has expired. Please log in again.';
+    case 'You are not logged in! Please log in to get access.':
+      return 'Please log in to continue.';
+    default:
+      return 'Login failed. Please try again or contact support.';
+  }
+};
+
 const Login = () => {
   const [formData, setFormData] = useState({
     email: '',
@@ -30,14 +49,23 @@ const Login = () => {
       await dispatch(loginUser(formData)).unwrap();
       navigate('/dashboard');
     } catch (err) {
-      toast.error(err || 'Login failed. Please try again.');
+      const friendlyMessage = getFriendlyErrorMessage(err);
+      toast.error(friendlyMessage);
     } finally {
       setIsLoading(false);
     }
   };
 
+  // Handle token expiration or unauthorized access
+  React.useEffect(() => {
+    if (error && error.includes('Invalid or expired token')) {
+      localStorage.removeItem('token'); // Clear invalid token
+      toast.error(getFriendlyErrorMessage(error));
+    }
+  }, [error]);
+
   return (
-    <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-blue-50 to-indigo-100 py-12 px-4 sm:px-6 lg:px-8">
+    <div className="min-h-screen flex items-center justify-center bg-gray-50 py-12 px-4 sm:px-6 lg:px-8">
       <div className="max-w-md w-full bg-white p-8 rounded-xl shadow-lg animate-fade-in space-y-8">
         <div className="text-center">
           <h2 className="text-3xl font-bold text-gray-800">
@@ -57,7 +85,6 @@ const Login = () => {
               <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
                 <svg
                   className="h-5 w-5 text-gray-400"
- manually="true"
                   fill="none"
                   stroke="currentColor"
                   viewBox="0 0 24 24"
@@ -98,7 +125,8 @@ const Login = () => {
                     strokeLinecap="round"
                     strokeLinejoin="round"
                     strokeWidth="2"
-                    d="M12 11c0 1.104-.896 2-2 2s-2-.896-2-2 2-4 2-4 2 .896 2 2zM12 11c0 1.104.896 2 2 2s2-.896 2-2-2-4-2-4-2 .896-2 2zM7 20h10a2 2 0 002-2V8a2 2 0 00-2-2H7a2 2 0 00-2 2v10a2 2 0 002ostyle={{ height: '1.25rem', width: '1.25rem' }}" />
+                    d="M12 11c0 1.104-.896 2-2 2s-2-.896-2-2 2-4 2-4 2 .896 2 2zM12 11c0 1.104.896 2 2 2s2-.896 2-2-2-4-2-4-2 .896-2 2zM7 20h10a2 2 0 002-2V8a2 2 0 00-2-2H7a2 2 0 00-2 2v10a2 2 0 002 2z"
+                  />
                 </svg>
               </div>
               <input
@@ -117,7 +145,7 @@ const Login = () => {
 
           {error && (
             <div className="text-red-500 text-sm text-center">
-              {error}
+              {getFriendlyErrorMessage(error)}
             </div>
           )}
 

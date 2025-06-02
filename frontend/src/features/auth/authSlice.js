@@ -19,7 +19,6 @@ export const loginUser = createAsyncThunk(
   async (credentials, { rejectWithValue }) => {
     try {
       const response = await login(credentials);
-      // console.log('Login response:', response.data);
       if (response.data?.token) {
         localStorage.setItem('token', response.data.token);
       }
@@ -35,11 +34,12 @@ export const logoutUser = createAsyncThunk(
   async (_, { rejectWithValue }) => {
     try {
       const response = await logout();
-      // console.log('logoutUser response:', response);
+      localStorage.removeItem('token'); // Clear token on successful logout
       return response;
     } catch (error) {
-      console.error('Logout API error:', error.response?.data || error.message);
-      return rejectWithValue(error.response?.data?.message || error.message);
+      // Even if the API call fails, consider logout successful if token is cleared
+      localStorage.removeItem('token');
+      return { status: 'success' }; // Treat as success since frontend state is cleared
     }
   }
 );
@@ -56,7 +56,6 @@ export const fetchUser = createAsyncThunk(
       const response = await getMe();
       return response.data.user;
     } catch (error) {
-      console.error('fetchUser error:', error);
       localStorage.removeItem('token');
       return rejectWithValue(error.response?.data?.message || 'Session expired');
     }
@@ -113,10 +112,6 @@ const authSlice = createSlice({
         state.user = action.payload.user;
         state.token = action.payload.token;
         localStorage.setItem('token', action.payload.token);
-        // console.log('Redux state after login:', {
-        //   user: state.user,
-        //   token: state.token,
-        // });
       })
       // Logout
       .addCase(logoutUser.pending, (state) => {
@@ -130,14 +125,14 @@ const authSlice = createSlice({
         localStorage.removeItem('token');
         toast.success('Logged out successfully!');
       })
-      .addCase(logoutUser.rejected, (state, action) => {
-        state.status = 'failed';
-        state.error = action.payload;
+      .addCase(logoutUser.rejected, (state) => {
+        // Treat as success since token is already cleared
+        state.status = 'succeeded';
         state.user = null;
         state.token = null;
-        state.dashboardView = 'user'; // Reset to user view on logout
+        state.dashboardView = 'user'; // Reset to user view
         localStorage.removeItem('token');
-        toast.error('Logout failed. Session cleared.');
+        toast.success('Logged out successfully!');
       })
       // Fetch User
       .addCase(fetchUser.pending, (state) => {
@@ -147,9 +142,7 @@ const authSlice = createSlice({
         state.status = 'succeeded';
         state.user = action.payload;
         state.token = localStorage.getItem('token');
-        // Set default dashboard view based on role
         state.dashboardView = action.payload.role === 'admin' ? 'admin' : 'user';
-        // console.log('User fetched successfully:', action.payload);
       })
       .addCase(fetchUser.rejected, (state, action) => {
         state.status = 'failed';
@@ -158,7 +151,6 @@ const authSlice = createSlice({
         state.token = null;
         state.dashboardView = 'user'; // Reset to user view on failure
         localStorage.removeItem('token');
-        console.error('Failed to fetch user:', action.payload);
       });
   },
 });

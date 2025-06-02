@@ -17,7 +17,7 @@ export const login = async (credentials) => {
 };
 
 export const logout = async () => {
-  const response = await API.get('/auth/logout');
+  const response = await API.post('/auth/logout');
   return response;
 };
 

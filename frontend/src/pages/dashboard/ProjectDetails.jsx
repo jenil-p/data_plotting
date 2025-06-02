@@ -177,10 +177,10 @@ const ProjectDetails = () => {
       {/* Floating AI Assistant Button */}
       <button
         onClick={() => setShowChatModal(true)}
-        className="fixed bottom-8 right-8 z-20 flex items-center justify-center w-14 h-14 rounded-full bg-indigo-600 text-white shadow-xl hover:bg-indigo-700 transition-all duration-300 hover:shadow-2xl"
+        className="fixed bottom-8 right-8 z-20 flex items-center justify-center w-14 h-14 max-sm:w-10 max-sm:h-10 rounded-full bg-indigo-600 text-white shadow-xl hover:bg-indigo-700 transition-all duration-300 hover:shadow-2xl"
         aria-label="Open AI Assistant"
       >
-        <FiMessageSquare className="h-6 w-6" />
+        <FiMessageSquare className="h-6 w-6 max-sm:w-4 max-sm:h-4" />
       </button>
 
       {/* Main Content */}
@@ -215,7 +215,7 @@ const ProjectDetails = () => {
         <div className="fixed inset-0 z-30 flex items-center justify-center p-4">
           {/* Overlay */}
           <div
-            className="absolute inset-0 bg-black bg-opacity-50 backdrop-blur-sm"
+            className="absolute inset-0 bg-opacity-50 backdrop-blur-sm"
             onClick={() => setShowChatModal(false)}
           ></div>
 

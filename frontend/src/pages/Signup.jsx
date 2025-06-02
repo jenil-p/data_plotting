@@ -23,10 +23,24 @@ const Signup = () => {
     });
   };
 
+  const getFriendlyErrorMessage = (error) => {
+    if (!error) return 'An unexpected error occurred. Please try again.';
+    const errorMessage = typeof error === 'string' ? error : error.message || 'Unknown error';
+
+    switch (errorMessage) {
+      case 'Passwords do not match':
+        return 'The passwords you entered do not match.';
+      case 'Duplicate field value: email':
+        return 'This email is already registered. Please use another email.';
+      default:
+        return 'Signup failed. Please try again or contact support.';
+    }
+  };
+
   const handleSubmit = async (e) => {
     e.preventDefault();
     if (formData.password !== formData.confirmPassword) {
-      toast.error('Passwords do not match');
+      toast.error(getFriendlyErrorMessage('Passwords do not match'));
       return;
     }
 
@@ -41,14 +55,15 @@ const Signup = () => {
       ).unwrap();
       navigate('/dashboard');
     } catch (err) {
-      toast.error(err || 'Signup failed. Please try again.');
+      const friendlyMessage = getFriendlyErrorMessage(err);
+      toast.error(friendlyMessage);
     } finally {
       setIsLoading(false);
     }
   };
 
   return (
-    <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-blue-50 to-indigo-100 py-12 px-4 sm:px-6 lg:px-8">
+    <div className="min-h-screen flex items-center justify-center bg-gray-50 py-12 px-4 sm:px-6 lg:px-8">
       <div className="max-w-md w-full bg-white p-8 rounded-xl shadow-lg animate-fade-in space-y-8">
         <div className="text-center">
           <h2 className="text-3xl font-bold text-gray-800">
@@ -190,9 +205,14 @@ const Signup = () => {
             </div>
           </div>
 
-          {error && (
+          {/* {error && (
             <div className="text-red-500 text-sm text-center">
               {error}
+            </div>
+          )} */}
+          {error && (
+            <div className="text-red-500 text-sm text-center">
+              {getFriendlyErrorMessage(error)}
             </div>
           )}
 

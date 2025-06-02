@@ -101,7 +101,7 @@ const DashboardLayout = () => {
       {mobileSidebarOpen && (
         <>
           <div
-            className="fixed inset-0 bg-black bg-opacity-50 z-40 md:hidden"
+            className="fixed inset-0 backdrop-blur-xs bg-opacity-50 z-40 md:hidden"
             onClick={() => setMobileSidebarOpen(false)}
           ></div>
           <div
@@ -144,10 +144,17 @@ const DashboardLayout = () => {
       <div className="flex-1 flex flex-col overflow-hidden">
         {/* Top Navbar */}
         <header className="bg-white shadow-sm">
-          <div className="flex items-center justify-between max-sm:justify-center p-4 sm:pl-16 md:pl-4">
-            <h2 className="text-xl max-sm:hidden font-semibold text-gray-800">
-              {dashboardView === 'admin' ? 'Admin Panel' : 'Dashboard'}
-            </h2>
+          <div className={`flex items-center justify-between ${user?.role === 'admin' ? 'max-sm:justify-center' : 'max-sm:justify-between' } p-4 sm:pl-16 md:pl-4`}>
+            {user?.role === 'admin' && (
+              <h2 className="text-xl max-sm:hidden font-semibold text-gray-800">
+                Admin Panel
+              </h2>
+            )}
+            {user?.role === 'user' && (
+              <h2 className="text-xl font-semibold text-gray-800">
+                Dashboard
+              </h2>
+            )}
             <div className="flex items-center space-x-4">
               {user?.role === 'admin' && (
                 <div className="flex items-center">
@@ -176,9 +183,9 @@ const DashboardLayout = () => {
                         Admin
                       </span>
                       <span
-                        className={`absolute left-1 top-1 h-7 w-[calc(50%-0.25rem)] rounded-full shadow-md transform transition-transform duration-1000 ease-in-out ${dashboardView === 'admin'
-                          ? 'translate-x-[calc(60%-0.5rem)] bg-gradient-to-r from-blue-500 to-indigo-600'
-                          : 'translate-x-0 bg-gradient-to-r from-teal-400 to-cyan-500'
+                        className={`absolute left-1 h-7 w-[calc(50%-0.25rem)] rounded-full shadow-md transform transition-transform duration-1000 ease-in-out bg-gradient-to-r from-gray-600 to-gray-900 ${dashboardView === 'admin'
+                          ? 'translate-x-[calc(110%-0.5rem)]'
+                          : 'translate-x-0 '
                           }`}
                       ></span>
                     </label>
