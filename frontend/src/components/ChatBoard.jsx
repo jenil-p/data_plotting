@@ -116,7 +116,7 @@ const ChatBoard = ({ projectId, columns, data }) => {
                 <div
                   className={`max-w-[80%] p-4 rounded-2xl ${
                     msg.role === 'user'
-                      ? 'bg-blue-600 text-gray-800 rounded-br-none'
+                      ? 'bg-[#707ee1] text-white rounded-br-none'
                       : 'bg-white text-gray-800 shadow-sm rounded-bl-none border border-gray-200'
                   }`}
                 >
@@ -129,9 +129,9 @@ const ChatBoard = ({ projectId, columns, data }) => {
                 <div className="bg-white p-3 rounded-2xl shadow-sm border border-gray-200 rounded-bl-none max-w-[70%]">
                   <div className="flex items-center space-x-2">
                     <div className="flex space-x-1">
-                      <div className="w-2 h-2 bg-blue-500 rounded-full animate-bounce" style={{ animationDelay: '0ms' }}></div>
-                      <div className="w-2 h-2 bg-blue-500 rounded-full animate-bounce" style={{ animationDelay: '150ms' }}></div>
-                      <div className="w-2 h-2 bg-blue-500 rounded-full animate-bounce" style={{ animationDelay: '300ms' }}></div>
+                      <div className="w-2 h-2 bg-[#707ee1] rounded-full animate-bounce" style={{ animationDelay: '0ms' }}></div>
+                      <div className="w-2 h-2 bg-[#707ee1] rounded-full animate-bounce" style={{ animationDelay: '150ms' }}></div>
+                      <div className="w-2 h-2 bg-[#707ee1] rounded-full animate-bounce" style={{ animationDelay: '300ms' }}></div>
                     </div>
                     <span className="text-gray-500 text-sm">Analyzing data...</span>
                   </div>
@@ -159,7 +159,7 @@ const ChatBoard = ({ projectId, columns, data }) => {
             className={`p-3 rounded-lg ${
               isLoading || !input.trim()
                 ? 'bg-gray-200 text-gray-400'
-                : 'bg-blue-600 text-gray-800 hover:bg-blue-700'
+                : 'bg-[#707ee1] text-white cursor-pointer'
             } transition-colors`}
           >
             {isLoading ? (

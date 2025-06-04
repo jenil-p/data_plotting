@@ -6,6 +6,10 @@ const { Readable } = require('stream');
 // Helper to parse file from buffer
 const parseFile = async (buffer, originalName) => {
   try {
+    if (!buffer) {
+      throw new Error('No file buffer provided');
+    }
+
     const ext = originalName.split('.').pop().toLowerCase();
 
     if (ext === 'csv') {
@@ -16,10 +20,12 @@ const parseFile = async (buffer, originalName) => {
           .pipe(csv())
           .on('data', (data) => results.push(data))
           .on('end', () => {
+            console.log('CSV parsing completed:', { rowCount: results.length });
             const columns = results.length > 0 ? Object.keys(results[0]) : [];
             resolve({ data: results, columns });
           })
           .on('error', (error) => {
+            console.error('CSV parsing error:', error.message);
             reject(new Error(`Failed to parse CSV file: ${error.message}`));
           });
       });
@@ -27,11 +33,13 @@ const parseFile = async (buffer, originalName) => {
       const workbook = xlsx.read(buffer, { type: 'buffer' });
       const sheetName = workbook.SheetNames[0];
       const data = xlsx.utils.sheet_to_json(workbook.Sheets[sheetName]);
+      console.log('Excel parsing completed:', { rowCount: data.length });
       const columns = data.length > 0 ? Object.keys(data[0]) : [];
       return { data, columns };
     }
     throw new Error('Unsupported file format');
   } catch (err) {
+    console.error('File parsing error:', err.message);
     throw new Error(`File parsing error: ${err.message}`);
   }
 };
@@ -52,7 +60,7 @@ exports.createProject = async (req, res, next) => {
       user: req.user.id,
       file: {
         originalName: req.file.originalname,
-        data: req.file.buffer, // Store file content as Buffer
+        data: req.file.buffer,
         size: req.file.size,
         columns,
       },
@@ -130,7 +138,7 @@ exports.getProject = async (req, res, next) => {
     const project = await Project.findOne({
       _id: req.params.id,
       user: req.user.id,
-    }).select('-file.data'); // Exclude file.data to reduce response size
+    }).select('-file.data');
 
     if (!project) {
       return res.status(404).json({
@@ -159,7 +167,7 @@ exports.getAllProjects = async (req, res, next) => {
   try {
     const projects = await Project.find({ user: req.user.id })
       .sort('-lastAccessed')
-      .select('-file.data'); // Exclude file.data to reduce response size
+      .select('-file.data');
 
     res.status(200).json({
       status: 'success',
@@ -197,7 +205,7 @@ exports.addChartToProject = async (req, res, next) => {
           },
         },
       },
-      { new: true, runValidators: true, select: '-file.data' } // Exclude file.data
+      { new: true, runValidators: true, select: '-file.data' }
     );
 
     if (!project) {
@@ -232,7 +240,7 @@ exports.deleteChart = async (req, res, next) => {
       {
         $pull: { charts: { _id: chartId } },
       },
-      { new: true, select: '-file.data' } // Exclude file.data
+      { new: true, select: '-file.data' }
     );
 
     if (!project) {

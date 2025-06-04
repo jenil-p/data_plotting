@@ -8,7 +8,6 @@ const router = express.Router();
 
 const together = new Together();
 
-// Protect the route
 router.use(authController.protect);
 
 router.post('/chat', async (req, res) => {
@@ -46,9 +45,25 @@ router.post('/chat', async (req, res) => {
       });
     }
 
+    // Validate file data
+    if (!project.file?.data) {
+      return res.status(400).json({
+        status: 'fail',
+        message: 'No file data available for this project',
+      });
+    }
+
     // Parse file data
     const { parseFile } = require('../controllers/projectController');
-    const { data, columns } = await parseFile(project.file.path, project.file.originalName);
+    const { data, columns } = await parseFile(project.file.data, project.file.originalName);
+
+    // Check if data is empty
+    if (!data || data.length === 0) {
+      return res.status(400).json({
+        status: 'fail',
+        message: 'The uploaded file is empty or contains no valid data',
+      });
+    }
 
     // Prepare context for Together AI
     const context = `
