@@ -143,7 +143,9 @@ const DashboardLayout = () => {
               } p-4 sm:pl-16 md:pl-4`}
           >
             {user?.role === 'admin' && (
-              <h2 className="text-xl max-sm:hidden font-semibold text-gray-800">Admin Panel</h2>
+              <h2 className="text-xl max-sm:hidden font-semibold text-gray-800">
+                {dashboardView === 'admin' ? 'Admin panel' : 'User Dashboard'}
+              </h2>
             )}
             {user?.role === 'user' && (
               <h2 className="text-xl font-semibold text-gray-800">Dashboard</h2>
