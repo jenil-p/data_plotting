@@ -108,4 +108,36 @@ const AuthWrapper = ({ children }) => {
   return children;
 };
 
+// const AuthWrapper = ({ children }) => {
+//   const dispatch = useDispatch();
+//   const navigate = useNavigate();
+//   const location = useLocation();
+//   const { token, user, status, dashboardView } = useSelector((state) => state.auth);
+
+//   useEffect(() => {
+//     const storedToken = localStorage.getItem('token');
+//     if (storedToken && !user) {
+//       dispatch(fetchUser());
+//     }
+//   }, [dispatch, user]);
+
+//   useEffect(() => {
+//     const authOnlyPublicPaths = ['/login', '/signup']; // Only redirect from these paths
+//     const isAuthOnlyPublicPath = authOnlyPublicPaths.includes(location.pathname);
+
+//     if (status === 'loading') return;
+
+//     if (token && user && isAuthOnlyPublicPath) {
+//       // Redirect authenticated users only from /login or /signup
+//       const redirectPath = dashboardView === 'admin' ? '/admindash' : '/dashboard';
+//       navigate(redirectPath, { replace: true });
+//     } else if (!token && !user && !['/', '/login', '/signup', '/about'].includes(location.pathname)) {
+//       // Redirect unauthenticated users to login for non-public routes
+//       navigate('/login', { state: { from: location }, replace: true });
+//     }
+//   }, [status, token, user, dashboardView, navigate, location]);
+
+//   return children;
+// };
+
 export default App;

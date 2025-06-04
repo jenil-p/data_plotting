@@ -1,0 +1,3 @@
+PlotPilot-backend : https://plotpilot-backend.onrender.com
+
+Frontend: plottpilot.netlify.app

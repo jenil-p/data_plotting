@@ -14,7 +14,8 @@ const projectSchema = new mongoose.Schema({
   },
   file: {
     originalName: String,
-    path: String,
+    // path: String,
+    data: Buffer,
     size: Number,
     columns: [String],
   },
