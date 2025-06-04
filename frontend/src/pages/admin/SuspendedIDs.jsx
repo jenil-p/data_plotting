@@ -1,10 +1,12 @@
 import React, { useState, useEffect } from 'react';
-import { FiUserCheck } from 'react-icons/fi';
+import { FiUserCheck, FiSearch } from 'react-icons/fi';
 import { toast } from 'react-hot-toast';
 import { getSuspendedUsers, unsuspendUser } from '../../api/admin';
 
 const SuspendedIDs = () => {
   const [suspendedUsers, setSuspendedUsers] = useState([]);
+  const [filteredSuspendedUsers, setFilteredSuspendedUsers] = useState([]);
+  const [searchTerm, setSearchTerm] = useState('');
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
@@ -12,6 +14,7 @@ const SuspendedIDs = () => {
       try {
         const response = await getSuspendedUsers();
         setSuspendedUsers(response.data.users);
+        setFilteredSuspendedUsers(response.data.users);
       } catch (error) {
         console.error('Failed to fetch suspended users:', error);
         toast.error('Failed to load suspended users');
@@ -22,11 +25,20 @@ const SuspendedIDs = () => {
     fetchSuspendedUsers();
   }, []);
 
+  useEffect(() => {
+    const filtered = suspendedUsers.filter(user =>
+      user.username.toString().toLowerCase().includes(searchTerm.toLowerCase()) ||
+      user.email.toLowerCase().includes(searchTerm.toLowerCase())
+    );
+    setFilteredSuspendedUsers(filtered);
+  }, [searchTerm, suspendedUsers]);
+
   const handleUnsuspendUser = async (userId) => {
     if (window.confirm('Are you sure you want to unsuspend this user? They will regain access to their account.')) {
       try {
         await unsuspendUser(userId);
         setSuspendedUsers(suspendedUsers.filter(user => user.id !== userId));
+        setFilteredSuspendedUsers(filteredSuspendedUsers.filter(user => user.id !== userId));
         toast.success('User unsuspended successfully');
       } catch (error) {
         console.error('Failed to unsuspend user:', error);
@@ -44,8 +56,20 @@ const SuspendedIDs = () => {
       <h1 className="text-3xl font-bold text-gray-900 mb-8">Suspended Users</h1>
 
       <div className="bg-white rounded-2xl shadow-xl border border-gray-100 overflow-hidden">
-        <h2 className="text-xl font-semibold text-gray-800 p-6">Suspended Accounts</h2>
-        {suspendedUsers.length === 0 ? (
+        <div className="p-6">
+          <h2 className="text-xl font-semibold text-gray-800 mb-4">Suspended Accounts</h2>
+          <div className="relative mb-4">
+            <FiSearch className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400" />
+            <input
+              type="text"
+              placeholder="Search by User ID or Email"
+              value={searchTerm}
+              onChange={(e) => setSearchTerm(e.target.value)}
+              className="w-full pl-10 pr-4 py-2 rounded-lg border border-gray-300 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 transition-colors"
+            />
+          </div>
+        </div>
+        {filteredSuspendedUsers.length === 0 ? (
           <p className="text-gray-500 text-center py-6 text-lg">No suspended users found.</p>
         ) : (
           <div className="overflow-x-auto">
@@ -59,7 +83,7 @@ const SuspendedIDs = () => {
                 </tr>
               </thead>
               <tbody>
-                {suspendedUsers.map((user) => (
+                {filteredSuspendedUsers.map((user) => (
                   <tr key={user.id} className="hover:bg-indigo-50 transition-colors duration-200">
                     <td className="border-b border-gray-200 px-6 py-4 text-gray-700">{user.username}</td>
                     <td className="border-b border-gray-200 px-6 py-4 text-gray-700">{user.email}</td>
