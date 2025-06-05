@@ -229,3 +229,34 @@ exports.promoteToAdmin = async (req, res, next) => {
     });
   }
 };
+
+exports.demoteToUser = async (req, res, next) => {
+  try {
+    const user = await User.findById(req.params.id);
+    if (!user) {
+      return res.status(404).json({
+        status: 'fail',
+        message: 'User not found',
+      });
+    }
+    if (user.role === 'user') {
+      return res.status(400).json({
+        status: 'fail',
+        message: 'User is already an user',
+      });
+    }
+    user.role = 'user';
+    await user.save();
+
+    res.status(200).json({
+      status: 'success',
+      message: 'Demoted to User successfully',
+    });
+  } catch (err) {
+    console.error('Error demoting Admin to User:', err.message);
+    res.status(500).json({
+      status: 'error',
+      message: 'Failed to Demote Admin to User',
+    });
+  }
+};

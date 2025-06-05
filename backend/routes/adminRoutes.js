@@ -15,5 +15,6 @@ router.patch('/users/:id/suspend', adminController.suspendUser);
 router.patch('/users/:id/unsuspend', adminController.unsuspendUser);
 router.delete('/users/:id', adminController.deleteUser);
 router.patch('/users/:id/promote', adminController.promoteToAdmin);
+router.patch('/users/:id/demote', adminController.demoteToUser);
 
 module.exports = router;

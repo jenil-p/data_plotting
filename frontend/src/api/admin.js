@@ -35,6 +35,11 @@ export const promoteToAdmin = async (userId) => {
   return response.data;
 };
 
+export const demoteToUser = async (userId) => {
+  const response = await API.patch(`/admin/users/${userId}/demote`);
+  return response.data;
+};
+
 export const getAdmins = async () => {
   const response = await API.get('/admin/users');
   return response.data;
