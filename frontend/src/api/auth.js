@@ -46,3 +46,8 @@ export const updateUsername = async (username) => {
   const response = await API.patch('/users/update-username', { username });
   return response.data;
 };
+
+export const updatePassword = async ({ password, confirmPassword }) => {
+  const response = await API.patch('/users/update-password', { password, confirmPassword });
+  return response.data;
+};
