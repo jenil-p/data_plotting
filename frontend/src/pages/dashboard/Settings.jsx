@@ -1,7 +1,8 @@
 import React, { useState } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
 import { updateUsername, updatePassword } from '../../api/auth';
-import { toast } from 'react-hot-toast';
+import { ToastContainer, toast } from 'react-toastify';
+import 'react-toastify/dist/ReactToastify.css';
 import { setCredentials } from '../../features/auth/authSlice';
 
 const Settings = () => {
@@ -74,6 +75,16 @@ const Settings = () => {
 
   return (
     <div className="max-w-4xl mx-auto p-6">
+      <ToastContainer
+        position="top-right"
+        autoClose={3000}
+        hideProgressBar={false}
+        newestOnTop
+        closeOnClick
+        pauseOnHover
+        draggable
+        theme="colored"
+      />
       <h1 className="text-2xl font-bold mb-6">Account Settings</h1>
 
       <div className="bg-white rounded-lg shadow p-6">

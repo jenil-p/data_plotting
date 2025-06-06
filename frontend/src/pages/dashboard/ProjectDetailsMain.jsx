@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import { FiTrash2, FiPlus, FiDownload } from 'react-icons/fi';
-import { toast } from 'react-hot-toast';
+import { ToastContainer, toast } from 'react-toastify';
+import 'react-toastify/dist/ReactToastify.css';
 
 const ProjectDetailsMain = ({ 
   project, 
@@ -41,6 +42,16 @@ const ProjectDetailsMain = ({
 
   return (
     <div className="space-y-8">
+      <ToastContainer
+        position="top-right"
+        autoClose={3000}
+        hideProgressBar={false}
+        newestOnTop
+        closeOnClick
+        pauseOnHover
+        draggable
+        theme="colored"
+      />
       {/* Project Title */}
       <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
         <h1 className="text-2xl sm:text-3xl font-bold text-gray-900 tracking-tight">{project.name}</h1>

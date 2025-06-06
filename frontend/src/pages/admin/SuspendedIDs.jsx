@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { FiUserCheck, FiSearch } from 'react-icons/fi';
-import { toast } from 'react-hot-toast';
+import { ToastContainer, toast } from 'react-toastify';
+import 'react-toastify/dist/ReactToastify.css';
 import { getSuspendedUsers, unsuspendUser } from '../../api/admin';
 
 const SuspendedIDs = () => {
@@ -53,6 +54,16 @@ const SuspendedIDs = () => {
 
   return (
     <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-10 bg-gradient-to-br from-gray-50 to-gray-100 min-h-screen">
+      <ToastContainer
+        position="top-right"
+        autoClose={3000}
+        hideProgressBar={false}
+        newestOnTop
+        closeOnClick
+        pauseOnHover
+        draggable
+        theme="colored"
+      />
       <h1 className="text-3xl font-bold text-gray-900 mb-8">Suspended Users</h1>
 
       <div className="bg-white rounded-2xl shadow-xl border border-gray-100 overflow-hidden">

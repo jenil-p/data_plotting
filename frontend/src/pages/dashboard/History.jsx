@@ -2,7 +2,8 @@ import React, { useEffect, useState } from 'react';
 import { Link } from 'react-router-dom';
 import { FiFile, FiClock, FiTrash2, FiDownload, FiChevronDown, FiChevronUp } from 'react-icons/fi';
 import { getProjects, deleteProject } from '../../api/project';
-import { toast } from 'react-hot-toast';
+import { ToastContainer, toast } from 'react-toastify';
+import 'react-toastify/dist/ReactToastify.css';
 
 const History = () => {
   const [projects, setProjects] = useState([]);
@@ -43,6 +44,16 @@ const History = () => {
 
   return (
     <div className="max-w-6xl mx-auto p-4 sm:p-6">
+      <ToastContainer
+        position="top-right"
+        autoClose={3000}
+        hideProgressBar={false}
+        newestOnTop
+        closeOnClick
+        pauseOnHover
+        draggable
+        theme="colored"
+      />
       <h1 className="text-2xl sm:text-3xl font-bold text-gray-900 mb-6">Project History</h1>
 
       {projects.length === 0 ? (

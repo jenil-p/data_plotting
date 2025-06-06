@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
-import { toast } from 'react-hot-toast';
+import { ToastContainer, toast } from 'react-toastify';
+import 'react-toastify/dist/ReactToastify.css';
 import { FiSave, FiPlus, FiTrash2 } from 'react-icons/fi';
 import { getAbout, updateAbout } from '../../api/about';
 
@@ -83,6 +84,16 @@ const EditAbout = () => {
 
   return (
     <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-10 bg-gradient-to-br from-gray-50 to-gray-100 min-h-screen">
+      <ToastContainer
+        position="top-right"
+        autoClose={3000}
+        hideProgressBar={false}
+        newestOnTop
+        closeOnClick
+        pauseOnHover
+        draggable
+        theme="colored"
+      />
       <h1 className="text-3xl font-bold text-gray-900 mb-8">Edit About Page</h1>
 
       <form onSubmit={handleSubmit} className="bg-white rounded-2xl shadow-xl border border-gray-100 p-6 space-y-6">

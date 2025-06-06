@@ -4,7 +4,8 @@ import { Link } from 'react-router-dom';
 import { FiMail, FiPhone, FiMapPin } from 'react-icons/fi';
 import DashboardLayout from '../components/DashboardLayout';
 import { getAbout } from '../api/about';
-import { toast } from 'react-hot-toast';
+import { ToastContainer, toast } from 'react-toastify';
+import 'react-toastify/dist/ReactToastify.css';
 import '../App.css';
 
 const About = () => {
@@ -41,6 +42,16 @@ const About = () => {
 
   const content = (
     <div className="min-h-screen bg-gray-800">
+      <ToastContainer
+        position="top-right"
+        autoClose={3000}
+        hideProgressBar={false}
+        newestOnTop
+        closeOnClick
+        pauseOnHover
+        draggable
+        theme="colored"
+      />
       {/* Header Section */}
       <section className="relative bg-gray-700 text-white py-16 sm:py-24 overflow-hidden">
         <div className="absolute inset-0 bg-gray-800 animate-gradient" />

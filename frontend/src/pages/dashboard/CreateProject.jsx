@@ -1,7 +1,8 @@
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useSelector } from 'react-redux';
-import { toast } from 'react-hot-toast';
+import { ToastContainer, toast } from 'react-toastify';
+import 'react-toastify/dist/ReactToastify.css';
 import { createProject } from '../../api/project';
 import { FiUpload, FiX, FiSave, FiTrash2 } from 'react-icons/fi';
 
@@ -42,13 +43,7 @@ const CreateProject = () => {
       formData.append('file', file);
       if (projectName) formData.append('name', projectName);
 
-      // console.log('Submitting project with FormData:', {
-      //   file: file.name,
-      //   name: projectName,
-      // });
-
       const response = await createProject(formData);
-      // console.log('createProject response:', response);
 
       if (!response.data?.project?._id) {
         throw new Error('Project ID not found in response');
@@ -56,7 +51,6 @@ const CreateProject = () => {
 
       toast.success('Project created successfully!');
       const projectId = response.data.project._id;
-      // console.log('Navigating to project details:', `/dashboard/${projectId}`);
 
       // Add a slight delay to ensure state updates are processed
       setTimeout(() => {
@@ -77,6 +71,16 @@ const CreateProject = () => {
 
   return (
     <div className="max-w-4xl mx-auto p-6">
+      <ToastContainer
+        position="top-right"
+        autoClose={3000}
+        hideProgressBar={false}
+        newestOnTop
+        closeOnClick
+        pauseOnHover
+        draggable
+        theme="colored"
+      />
       <h1 className="text-2xl font-bold mb-6">Create New Project</h1>
 
       <form onSubmit={handleSubmit} className="space-y-6">
