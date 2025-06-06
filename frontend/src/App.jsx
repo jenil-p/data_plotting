@@ -32,18 +32,19 @@ function App() {
       <Router>
         <AuthWrapper>
           <Routes>
-            {/* Public routes */}
+            {/* Public routes that don't need PublicRoute wrapper */}
+            <Route path="/" element={<Home />} />
+            <Route path="/about" element={<About />} />
+
+            {/* Public routes that need protection from authenticated users */}
             <Route element={<PublicRoute />}>
-              <Route path="/" element={<Home />} />
               <Route path="/login" element={<Login />} />
               <Route path="/signup" element={<Signup />} />
-              <Route path="/about" element={<About />} />
             </Route>
 
-            {/* Protected routes for all authenticated users */}
+            {/* Protected user routes */}
             <Route element={<ProtectedRoute />}>
               <Route element={<DashboardLayout />}>
-                {/* User routes */}
                 <Route path="/dashboard" element={<CreateProject />} />
                 <Route path="/dashboard/:id" element={<ErrorBoundary><ProjectDetails /></ErrorBoundary>} />
                 <Route path="/history" element={<History />} />
@@ -77,7 +78,7 @@ const AuthWrapper = ({ children }) => {
   const dispatch = useDispatch();
   const navigate = useNavigate();
   const location = useLocation();
-  const { token, user, status, dashboardView } = useSelector((state) => state.auth);
+  const { token, user, status } = useSelector((state) => state.auth);
 
   useEffect(() => {
     const storedToken = localStorage.getItem('token');
@@ -87,57 +88,16 @@ const AuthWrapper = ({ children }) => {
   }, [dispatch, user]);
 
   useEffect(() => {
-    const redirectablePublicPaths = ['/', '/login', '/signup']; // Exclude /about from redirect
-    const isRedirectablePublicPath = redirectablePublicPaths.includes(location.pathname);
-
     if (status === 'loading') return;
 
-    if (token && user) {
-      // Only redirect if the user is on a redirectable public path (i.e., not /about)
-      if (isRedirectablePublicPath) {
-        const redirectPath = dashboardView === 'admin' ? '/admindash' : '/dashboard';
-        navigate(redirectPath, { replace: true });
-      }
-    } else if (!redirectablePublicPaths.includes(location.pathname) && location.pathname !== '/about') {
-      // Redirect to login if the user is not authenticated and trying to access a non-public route
+    // If not authenticated and trying to access protected route
+    if (!token && !['/', '/about', '/login', '/signup'].includes(location.pathname)) {
       navigate('/login', { state: { from: location }, replace: true });
     }
-  }, [status, token, user, dashboardView, navigate, location]);
-
+  }, [status, token, user, navigate, location]);
 
   return children;
 };
 
-// const AuthWrapper = ({ children }) => {
-//   const dispatch = useDispatch();
-//   const navigate = useNavigate();
-//   const location = useLocation();
-//   const { token, user, status, dashboardView } = useSelector((state) => state.auth);
-
-//   useEffect(() => {
-//     const storedToken = localStorage.getItem('token');
-//     if (storedToken && !user) {
-//       dispatch(fetchUser());
-//     }
-//   }, [dispatch, user]);
-
-//   useEffect(() => {
-//     const authOnlyPublicPaths = ['/login', '/signup']; // Only redirect from these paths
-//     const isAuthOnlyPublicPath = authOnlyPublicPaths.includes(location.pathname);
-
-//     if (status === 'loading') return;
-
-//     if (token && user && isAuthOnlyPublicPath) {
-//       // Redirect authenticated users only from /login or /signup
-//       const redirectPath = dashboardView === 'admin' ? '/admindash' : '/dashboard';
-//       navigate(redirectPath, { replace: true });
-//     } else if (!token && !user && !['/', '/login', '/signup', '/about'].includes(location.pathname)) {
-//       // Redirect unauthenticated users to login for non-public routes
-//       navigate('/login', { state: { from: location }, replace: true });
-//     }
-//   }, [status, token, user, dashboardView, navigate, location]);
-
-//   return children;
-// };
 
 export default App;

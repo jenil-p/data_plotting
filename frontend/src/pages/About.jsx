@@ -191,7 +191,8 @@ const About = () => {
     </div>
   );
 
-  return user ? <DashboardLayout>{content}</DashboardLayout> : <div>{content}</div>;
+  // return user ? <DashboardLayout>{content}</DashboardLayout> : <div>{content}</div>;
+  return content;
 };
 
 export default About;

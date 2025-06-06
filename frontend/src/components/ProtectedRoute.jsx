@@ -6,8 +6,6 @@ const ProtectedRoute = () => {
   const { user, token, status } = useSelector((state) => state.auth);
   const location = useLocation();
 
-  // console.log('ProtectedRoute state:', { user, token, status });
-
   if (status === 'loading') {
     return <div className="flex justify-center items-center h-screen">
       <div>Verifying your session...</div>
