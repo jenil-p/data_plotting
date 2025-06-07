@@ -22,7 +22,7 @@ const projectSchema = new mongoose.Schema({
   charts: [{
     type: {
       type: String,
-      enum: ['bar', 'line', 'scatter', 'pie', 'bar3d', 'line3d', 'scatter3d', 'surface'],
+      enum: ['bar', 'line', 'scatter', 'pie', 'line3d', 'scatter3d'],
       required: true,
     },
     title: String,

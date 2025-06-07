@@ -9,9 +9,9 @@ const ThreeChart = ({ chart, data }) => {
     if (!data || data.length === 0) return;
 
     // Extract data for the chart
-    const xData = data.map(row => row[chart.xAxis] ?? null);
-    const yData = data.map(row => row[chart.yAxis] ?? null);
-    const zData = data.map(row => row[chart.zAxis] ?? null);
+    const xData = data.map(row => row[chart.xAxis] ?? null).map(val => parseFloat(val)).filter(val => !isNaN(val));
+    const yData = data.map(row => row[chart.yAxis] ?? null).map(val => parseFloat(val)).filter(val => !isNaN(val));
+    const zData = data.map(row => row[chart.zAxis] ?? null).map(val => parseFloat(val)).filter(val => !isNaN(val));
 
     // Check if data is valid
     if (!xData.length || !yData.length || !zData.length) {
@@ -19,34 +19,42 @@ const ThreeChart = ({ chart, data }) => {
       return;
     }
 
-    // Prepare Plotly trace
-    let trace = {
-      x: xData,
-      y: yData,
-      z: zData,
-      name: `${chart.xAxis} vs ${chart.yAxis} vs ${chart.zAxis}`,
-    };
-
+    let traces = [];
     let plotTitle = `3D Plot: ${chart.yAxis} vs ${chart.xAxis} vs ${chart.zAxis}`;
 
     // Customize based on chart type
     if (chart.type === 'scatter3d') {
-      trace.mode = 'markers';
-      trace.marker = { size: 5, color: chart.color || 'rgb(23, 190, 207)' };
-      trace.type = 'scatter3d';
+      traces.push({
+        x: xData,
+        y: yData,
+        z: zData,
+        mode: 'markers',
+        marker: { 
+          size: 5, 
+          color: chart.color || 'rgb(23, 190, 207)',
+          symbol: 'circle',
+        },
+        type: 'scatter3d',
+        name: `${chart.xAxis} vs ${chart.yAxis} vs ${chart.zAxis}`,
+      });
       plotTitle = `3D Scatter Plot: ${chart.yAxis} vs ${chart.xAxis} vs ${chart.zAxis}`;
     } else if (chart.type === 'line3d') {
-      trace.mode = 'lines+markers';
-      trace.line = { color: chart.color || 'rgb(255, 127, 14)', width: 2 };
-      trace.marker = { size: 3, color: chart.color || 'rgb(255, 127, 14)' };
-      trace.type = 'scatter3d';
+      traces.push({
+        x: xData,
+        y: yData,
+        z: zData,
+        mode: 'lines+markers',
+        line: { color: chart.color || 'rgb(255, 127, 14)', width: 2 },
+        marker: { 
+          size: 3, 
+          color: chart.color || 'rgb(255, 127, 14)',
+          symbol: 'circle',
+        },
+        type: 'scatter3d',
+        name: `${chart.xAxis} vs ${chart.yAxis} vs ${chart.zAxis}`,
+      });
       plotTitle = `3D Line Plot: ${chart.yAxis} vs ${chart.xAxis} vs ${chart.zAxis}`;
-    } else if (chart.type === 'bar3d') {
-      trace.mode = 'markers';
-      trace.marker = { size: 8, color: chart.color || 'rgb(75, 192, 192)', symbol: 'square' };
-      trace.type = 'scatter3d';
-      plotTitle = `3D Bar Plot: ${chart.yAxis} vs ${chart.xAxis} vs ${chart.zAxis}`;
-    }
+    } 
 
     // Get container dimensions
     const containerWidth = plotContainerRef.current?.offsetWidth || 400;
@@ -58,13 +66,30 @@ const ThreeChart = ({ chart, data }) => {
       height: containerHeight,
       margin: { l: 10, r: 10, b: 10, t: 40 },
       scene: {
-        xaxis: { title: chart.xAxis },
-        yaxis: { title: chart.yAxis },
-        zaxis: { title: chart.zAxis },
+        xaxis: { 
+          title: chart.xAxis,
+          tickmode: 'auto',
+          gridcolor: 'rgba(0, 0, 0, 0.2)',
+        },
+        yaxis: { 
+          title: chart.yAxis,
+          tickmode: 'auto',
+          gridcolor: 'rgba(0, 0, 0, 0.2)',
+        },
+        zaxis: { 
+          title: chart.zAxis,
+          tickmode: 'auto',
+          gridcolor: 'rgba(0, 0, 0, 0.2)',
+          range: [0, Math.max(...zData) * 1.1], // Start z-axis at 0 for bar-like effect
+        },
+        aspectmode: 'cube', // Equal scaling for better visualization
+        camera: {
+          eye: { x: 1.8, y: 1.8, z: 1.2 }, // Adjusted for better 3D view
+        },
       },
     };
 
-    setPlotlyConfig({ data: [trace], layout });
+    setPlotlyConfig({ data: traces, layout });
   }, [chart, data]);
 
   // Handle window resize to update chart dimensions

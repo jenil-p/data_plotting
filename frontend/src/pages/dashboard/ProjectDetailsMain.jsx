@@ -142,7 +142,6 @@ const ProjectDetailsMain = ({
                 <option value="line">2D Line</option>
                 <option value="scatter">2D Scatter</option>
                 <option value="pie">2D Pie</option>
-                <option value="bar3d">3D Bar</option>
                 <option value="line3d">3D Line</option>
                 <option value="scatter3d">3D Scatter</option>
               </select>
